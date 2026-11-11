@@ -1,42 +1,52 @@
-# Incremental progression prototype
+# Progression and combat prototype
 
-## Loop
-- Five story rounds; every attempt contains four escalating waves in the current round.
-- Waves start automatically. B / Recruit spends Focus during combat. Click units to inspect them.
-- Wins and losses open the permanent-upgrade screen. Win: next round. Loss: repeat current round.
-- Finishing round five closes the story. Continue beyond story starts optional harder rounds.
-- Focus resets every attempt. Insight and upgrades persist in localStorage through the engine save adapter.
-- Insight is banked immediately: kills, cleared waves, victory and every eight seconds of combat.
-- Even a no-kill loss earns Insight. Interrupted attempts keep banked Insight and retry the same round.
-- Only Deliberate practice is visible initially. Buying it opens branches. Repeat purchases cost more.
-- Advanced branches show prerequisites and cumulative wave milestones. No permanent purchases in combat.
-- Recovery heals the brain and surviving defenders after a wave. New attempts restore brain health.
-- New attempts replace the defender roster. Focus never buys permanent upgrades.
-- P/Escape pauses. End attempt exits through the upgrade screen, keeping earned Insight.
-- Reset save requires two clicks on the upgrade screen. It clears only progression, not other site storage.
+## Controls / progression
+- Five story rounds with four automatic waves each; wins advance, losses retry through the upgrade tree.
+- Focus is attempt-only; Insight and all unlocked nodes persist via localStorage (progression-v1).
+- Keys 1..5 recruit Reading, Exercise, Sleep, Social Connection, Mindfulness when unlocked.
+- B also recruits Reading. Click a defender to inspect; P/Escape pauses.
+- Upgrades use Insight only on the tree screen; repeat levels cost more. Unit unlocks are one-time.
+- Tree: wheel, Up/Down or drag scrolls. Click a node, then Purchase selected.
+- Node colors: gray locked, neutral available, green affordable, blue purchased/unlocked. Levels remain visible.
+- Only the root is visible initially; purchases reveal connected branches.
+- Reset save requires two clicks and affects progression only. Older saves receive zero levels for new nodes.
 
-## Tuning / modules
-- combat/config.ts: unit stats, AI behaviors, threat, slowing, interception, team size and brain damage.
-- combat/waves.ts: five round difficulty multipliers, four wave counts, composition and spawn cadence.
-- progression/currency.ts: starting Focus, recruit cost, kill rewards and Insight calculations.
-- progression/upgrades.ts: seven upgrade definitions, effect descriptions, prices and prerequisites.
-- progression/state.ts: versioned save validation, upgrades, progression and interrupted-attempt recovery.
-- battle.ts: application of upgrade effects, wave recovery, currencies and combat outcomes.
-- scenes/GameOver.ts: paginated upgrade screen, levels/effects/costs/prerequisites and reset control.
-- dialogue/rounds.ts: five editable narrative introductions; dialogue never blocks automatic combat.
-- main.ts: game.save localStorage adapter, key progression-v1 in the game's namespace.
-- Storage errors degrade to session memory and display a warning on the upgrade screen.
+## Brain attacks and roles
+- Enemies reaching the brain remain alive and attack with their own damage and attack interval.
+- Seven offset approach positions plus separation spread attackers. Brain attackers have red rings.
+- Defenders prioritize brain attackers even outside normal detection radius and rush back to intercept.
+- Reading: baseline melee damage. Exercise: fast pursuit sprint, including emergency interception.
+- Sleep: durable healer for nearby living allies. Social: nearby non-stacking damage aura.
+- Mindfulness: area damage and a longer slow pulse. Masteries improve all instances of their unit type.
+- Enemies remain targetable during siege; killing them stops their attacks and awards Focus/Insight normally.
+
+## Tunable modules
+- combat/config.ts: enemy base stats, AI profiles, threat, slow, spacing, brain attack radius.
+- combat/defenders.ts: defender prices/stats/colors/roles and ability parameters.
+- combat/waves.ts: five round difficulty multipliers, four wave counts, composition, cadence and scaling.
+- progression/upgrades.ts: 16 nodes, costs/growth, prerequisites, milestones, one-time caps, icons and graph positions.
+  More nodes need data plus an effect handler; the clipped scrolling viewport has no hardcoded node count/page cap.
+- progression/currency.ts: attempt resources and currency payouts.
+- progression/state.ts: save validation/migration, purchases, attempt settlements and permanent progression.
+- combat/units.ts: movement, melee, brain approach positions, role abilities and separation.
+- battle.ts: live purchases, upgraded stats, timed waves, brain damage, rewards and outcomes.
+- scenes/GameOver.ts: upgrade tree and detail panel. scenes/Play.ts: combat UI.
+
+## Balance evidence
+- Round difficulty: 2.15 / 3.4 / 4.5 / 5.8 / 7.2. Repeat upgrade cost growth: 1.35.
+- tests/campaign-balance.ts runs four deterministic earned-currency strategies (one recruitment decision/sec):
+  offense-first 6 attempts; defense-first 8; mixed frontline 6; specialist-unlock-first 10.
+- All lose naturally in round one before upgrading; some lose later as well. No forced attempt count.
+- These are playtest baselines, not guarantees for every strategy, reaction time or team composition.
+- tests/campaign-simulation.ts contains the actual purchase priorities and recruitment choices.
 
 ## Verification
-- npm test: unlocks, repeat costs, milestone locks, currency separation, failure/retry, interrupted saves,
-  all five four-wave rounds, story completion, endless play, upgrade effects, recovery and retained AI tests.
-- tests/balance.ts compares base and upgraded builds across every story round.
-- tests/campaign-balance.ts buys upgrades only with earned Insight until the story is complete.
-- Current simple cheapest-upgrade/recruit-as-affordable strategy completes in 31 attempts (26 losses).
-  This is initial balance evidence, not a claim that every strategy takes this long; tune after playtesting.
-- Browser: no-defense loss returned to upgrades with +7 Insight, same round; retry reset Focus.
-- Purchased damage and attack upgrades survived actual browser restart.
-- Browser four-wave victory returned to upgrades with +66 Insight and round two unlocked.
-- Reset, malformed saves and idempotent settlement are covered by regression tests.
-- Debug screen command remains available; inspect includes run state, profile and storage status.
-- npm run -s serve: http://localhost:4173/. Placeholder graphics only, no paid assets.
+- npm test covers campaign strategies, all rounds/endless, retries, saves, new-node migration, unlock caps,
+  global/unit-specific effects, brain siege persistence/cadence, emergency targeting, attacker separation,
+  healing, non-stacking buffs, area slowing/damage, and retained enemy behavior tests.
+- Browser: real defeat -> Insight -> root purchase -> branch reveal; tree keyboard/drag scroll;
+  selected mastery purchase; unlocked-role buttons and combat rendering.
+- Preview tests snapshot and restore progression; user progression is not left with test grants.
+- Debug: test-snapshot, test-tree, test-restore (restore before reloading); screen; inspect.
+- npm run -s smoke -- --seconds 30 checks browser runtime; npm run -s serve opens localhost:4173.
+- All art is placeholder. No paid assets generated.

@@ -1,7 +1,8 @@
+import { campaign } from './campaign-simulation.ts';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { run, resetRun, buyDefender, stepBattle, endAttempt } from '../game/battle.ts';
-import { createUnit, separate, distance, act, hit } from '../game/combat/units.ts';
+import { createUnit, separate, distance, act, hit, support, brainPosition } from '../game/combat/units.ts';
 import { AI, BEHAVIORS } from '../game/combat/config.ts';
 import { wavesForRound } from '../game/combat/waves.ts';
 import { profile,resetProgress,loadProgress,purchaseUpgrade,visible,unlocked,saveProgress } from '../game/progression/state.ts';
@@ -44,13 +45,12 @@ test('save round-trip preserves Insight, upgrades and milestones; interrupted co
  resetProgress();assert.equal(profile.insight,0);assert.equal(profile.round,1);assert.equal(profile.levels.damage,0);
  loadProgress({version:1,insight:NaN,levels:{damage:-5},round:-1},()=>{});assert.equal(profile.insight,0);assert.equal(profile.round,1);
 });
-test('actual earned-currency campaign eventually wins after meaningful losses',()=>{
- resetProgress();let losses=0;
- for(let attempt=0;attempt<60&&!profile.storyComplete;attempt++) {
-  resetRun();fight();if(run.phase==='defeat'){losses++;assert.ok(run.insightEarned>0);}
-  for(let i=0;i<100;i++) {const options=UPGRADES.filter(u=>visible(u)&&unlocked(u)&&upgradeCost(u,profile.levels[u.id])<=profile.insight).sort((a,b)=>upgradeCost(a,profile.levels[a.id])-upgradeCost(b,profile.levels[b.id]));if(!options.length)break;purchaseUpgrade(options[0].id);}
+test('four earned-currency strategies complete with natural losses',()=>{
+ for(const strategy of ['offense','defense','mixed','roles']){
+  const result=campaign(strategy,20);assert.equal(result.complete,true,strategy);
+  assert.ok(result.attempts>=6&&result.attempts<=12,`${strategy}: ${result.attempts}`);
+  assert.ok(result.history.some(a=>a.result==='defeat'));
  }
- assert.equal(profile.storyComplete,true);assert.ok(losses>=2);
 });
 test('aggressive seeks defenders; opportunistic responds to damage then returns to brain', () => {
     const defender = createUnit(1,'reading',580,300);
@@ -94,4 +94,39 @@ test('permanent resources, income, stats and wave recovery affect combat',()=>{
  run.hp=100;unit.hp=50;run.spawned=wavesForRound(1)[0].enemies.length;
  run.enemies=[createUnit(999,'distraction',900,300)];run.enemies[0].hp=0;
  const focus=run.focus;stepBattle(1/60);assert.equal(run.focus,focus+28);assert.equal(run.hp,116);assert.equal(unit.hp,80);assert.equal(run.wave,1);
+});
+
+test('brain attackers persist, damage repeatedly, remain targetable and stop damage on death',()=>{
+ resetProgress();resetRun();run.spawnTimer=1000;
+ const a=createUnit(100,'distraction',0,0),b=createUnit(102,'distraction',0,0);
+ Object.assign(a,brainPosition(a));Object.assign(b,brainPosition(b));run.enemies=[a,b];
+ stepBattle(1/60);const first=run.hp;assert.equal(run.enemies.length,2);assert.ok(a.attackingBrain&&b.attackingBrain);
+ assert.equal(first,100-a.damage-b.damage);stepBattle(0.1);assert.equal(run.hp,first,'respect attack interval');
+ for(let i=0;i<85;i++)stepBattle(1/60);assert.ok(run.hp<first);assert.ok(a.hp>0);
+ const defender=createUnit(103,'exercise',950,300),decoy=createUnit(104,'distraction',980,300);
+ act(defender,[decoy,a],1/60);assert.equal(defender.targetId,a.id,'brain attacker beats nearby decoy');assert.ok(defender.x<950);
+ a.hp=0;b.hp=0;const hp=run.hp;stepBattle(1/60);stepBattle(2);assert.equal(run.hp,hp);assert.equal(run.enemies.length,0);assert.equal(run.kills,2);
+});
+test('brain-front separation prevents coincident attackers',()=>{
+ const units=Array.from({length:7},(_,i)=>createUnit(i+20,'distraction',230,316));
+ for(let i=0;i<180;i++){for(const u of units)act(u,[],1/60);separate(units,1/60);}
+ for(let i=0;i<units.length;i++)for(let j=i+1;j<units.length;j++)assert.ok(distance(units[i],units[j])>20);
+});
+test('unit unlocks are one-time, old saves migrate, mastery applies to every instance',()=>{
+ loadProgress({version:1,insight:100,levels:{damage:1,movement:1},round:2},()=>{});
+ assert.equal(profile.levels.unlock_exercise,0);assert.equal(purchaseUpgrade('unlock_exercise'),true);
+ assert.equal(purchaseUpgrade('unlock_exercise'),false);assert.ok(visible(UPGRADES.find(u=>u.id==='exercise_mastery')!));
+ assert.equal(purchaseUpgrade('exercise_mastery'),true);profile.levels.resources=4;
+ resetRun();buyDefender('exercise');buyDefender('exercise');assert.equal(run.defenders.length,2);
+ assert.equal(run.defenders[0].roleLevel,1);assert.equal(run.defenders[1].roleLevel,1);
+ const focus=run.focus;buyDefender('sleep');assert.equal(run.focus,focus,'locked role cannot be purchased');
+});
+test('Sleep heals, Social buffs without stacking, Mindfulness damages and slows an area',()=>{
+ const healer=createUnit(1,'sleep',400,300),ally=createUnit(2,'reading',430,300),social=createUnit(3,'social',450,300);
+ ally.hp=50;support([healer,ally,social],1);assert.ok(ally.hp>50);assert.ok(ally.buff>1);
+ const buff=ally.buff;support([healer,ally,social,createUnit(4,'social',450,320)],1);assert.equal(ally.buff,buff);
+ const mind=createUnit(5,'mindfulness',500,300),enemy=createUnit(6,'distraction',550,300),other=createUnit(7,'distraction',560,315);
+ act(mind,[enemy,other],1/60);assert.ok(enemy.hp<enemy.maxHp&&other.hp<other.maxHp);assert.ok(other.slow>0);
+ const runner=createUnit(8,'exercise',400,300),reader=createUnit(9,'reading',400,300),target=createUnit(10,'distraction',700,300);
+ act(runner,[target],0.1);act(reader,[target],0.1);assert.ok(runner.x-reader.x>5,'Exercise sprints rather than merely walking');
 });

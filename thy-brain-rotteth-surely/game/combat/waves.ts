@@ -1,6 +1,6 @@
 import type { Behavior } from './config.js';
 // Four increasingly dense waves per round. Rounds >5 are optional endless progression.
-export const ROUND_DIFFICULTY = [1.8,3,5,6.5,8.5];
+export const ROUND_DIFFICULTY = [2.15,3.4,4.5,5.8,7.2];
 export const WAVE_COUNTS = [4,6,8,10];
 export const COMPOSITION:Behavior[] = ['aggressive','opportunistic','evasive','relentless','relentless','evasive'];
 export function wavesForRound(round:number) {
@@ -12,5 +12,7 @@ export function wavesForRound(round:number) {
   speedScale:Math.min(1.5,1+(round-1)*0.05+wave*0.035),
  }));
 }
+
+
 
 

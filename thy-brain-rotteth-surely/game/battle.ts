@@ -1,4 +1,5 @@
-import { createUnit, act, separate, distance, type Unit } from './combat/units.js';
+import { DEFENDERS, type DefenderKind } from './combat/defenders.js';
+import { createUnit, act, separate, support, type Unit } from './combat/units.js';
 import { ECONOMY, BATTLE } from './combat/config.js';
 import { wavesForRound } from './combat/waves.js';
 import { profile, beginAttempt, finishAttempt, addInsight, saveProgress } from './progression/state.js';
@@ -18,15 +19,19 @@ export function endAttempt(won:boolean):void {
  if(won) earn(CURRENCY.insightPerVictory+run.round*2);
  run.phase=won?'victory':'defeat'; finishAttempt(won,run.insightEarned);
 }
-export function buyDefender():void {
+export function buyDefender(kind:DefenderKind='reading'):void {
  if(run.phase!=='combat') return;
- if(run.focus<COST) {run.message=`Recruiting costs ${COST} Focus.`;return;}
+ if(kind!=='reading' && !profile.levels['unlock_'+kind]) {run.message='Unlock this defender in the tree first.';return;}
+ const cost=DEFENDERS[kind].cost;
+ if(run.focus<cost) {run.message=`Recruiting costs ${cost} Focus.`;return;}
  if(run.defenders.length>=ECONOMY.capacity) {run.message='Team full.';return;}
- run.focus-=COST; const index=run.defenders.length;
- const unit=createUnit(run.nextId++,'reading',260+Math.floor(index/4)*42,200+(index%4)*72);
+ run.focus-=cost; const index=run.defenders.length;
+ const unit=createUnit(run.nextId++,kind,260+Math.floor(index/4)*42,200+(index%4)*72);
+ unit.roleLevel=profile.levels[kind+'_mastery'] ?? 0;
+ unit.damage*=1+unit.roleLevel*0.15;unit.maxHp*=1+unit.roleLevel*0.15;unit.hp=unit.maxHp;
  unit.damage*=1+profile.levels.damage*0.25; unit.attackSpeed*=1+profile.levels.attack*0.15;
  unit.speed*=1+profile.levels.movement*0.1;
- run.defenders.push(unit);run.selected=unit.id;run.message='Reading recruited.';
+ run.defenders.push(unit);run.selected=unit.id;run.message=DEFENDERS[kind].name+' recruited.';
 }
 export function stepBattle(dt:number):void {
  if(run.phase!=='combat') return;
@@ -39,12 +44,16 @@ export function stepBattle(dt:number):void {
   enemy.hp*=wave.healthScale;enemy.maxHp=enemy.hp;enemy.damage*=wave.damageScale;enemy.speed*=wave.speedScale;
   run.enemies.push(enemy);run.spawned++;run.spawnTimer+=wave.interval;
  }
+ support(run.defenders,dt);
  for(const u of run.defenders) if(u.hp>0) act(u,run.enemies,dt);
  for(const u of run.enemies) if(u.hp>0) act(u,run.defenders,dt);
  separate([...run.defenders,...run.enemies].filter(u=>u.hp>0),dt);
  for(const enemy of run.enemies) {
   if(enemy.hp<=0) {const reward=focusReward(profile.levels.income);run.focus+=reward;run.kills++;earn(CURRENCY.insightPerKill);run.message=`+${reward} Focus / +${CURRENCY.insightPerKill} Insight`;}
-  else if(distance(enemy,BATTLE.brain)<BATTLE.breachRadius) {enemy.hp=0;run.hp=Math.max(0,run.hp-BATTLE.leakDamage);run.leaks++;run.message='The brain is rotting.';}
+  else if(enemy.attackingBrain) {
+   if(!enemy.reachedBrain){enemy.reachedBrain=true;run.leaks++;}
+   if(enemy.cooldown<=0){run.hp=Math.max(0,run.hp-enemy.damage);enemy.cooldown=1/enemy.attackSpeed;run.message='The brain is under sustained attack!';}
+  }
  }
  run.losses+=run.defenders.filter(u=>u.hp<=0).length;run.defenders=run.defenders.filter(u=>u.hp>0);run.enemies=run.enemies.filter(u=>u.hp>0);
  if(!run.defenders.some(u=>u.id===run.selected)) run.selected=run.defenders[0]?.id??null;
@@ -60,3 +69,4 @@ export function stepBattle(dt:number):void {
   }
  }
 }
+
