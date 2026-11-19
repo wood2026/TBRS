@@ -6,11 +6,18 @@ import { musicButton } from '../music.js';
 import { listen, tapped } from '../input.js';
 import { createDialoguePanel } from '../dialogue/panel.js';
 import { run, resetRun, buyDefender, stepBattle } from '../battle.js';
-import { BEHAVIORS } from '../combat/config.js';
+import { BEHAVIORS, type Behavior } from '../combat/config.js';
 
 let stopListening = (): void => {};
 
 const ROLE_EFFECTS: Partial<Record<string, string>> = { exercise: 'sprint', sleep: 'healing', social: 'buff', mindfulness: 'pulse' };
+
+const DISTRACTION_LABELS: [Behavior, string][] = [
+    ['aggressive', 'Pop-up Ads'],
+    ['opportunistic', 'Phone Notifications'],
+    ['evasive', 'Tab Hopping'],
+    ['relentless', 'Autoplay Feeds'],
+];
 
 const screenX = (x: number) => 300 + (x - 190) * 0.88;
 const screenY = (y: number) => 244 + (y - 125) * 0.69;
@@ -41,7 +48,11 @@ export const Play = {
         const hud = game.text('', 32, 38, { align: 'left', size: 24 });
         const notice = game.text('', 640, 98, { size: 18, color: '#ffd88a', stroke: { color: '#151024', width: 3 } });
         const stats = game.text('', 640, 514, { size: 17, color: '#e1e8fa' });
-        game.text('Red: aggressive   Gold: opportunistic   Purple: evasive   Blue: relentless', 640, 540, { size: 14, color: '#d5c7ef' });
+        DISTRACTION_LABELS.forEach(([behavior, label], index) => {
+            const x = 280 + index * 200;
+            game.spawn({ texture: behavior, x, y: 540, width: 24, layer: 'hud', sx: behavior === 'evasive' ? -1 : 1 });
+            game.text(label, x + 19, 540, { align: 'left', size: 14, color: BEHAVIORS[behavior].color });
+        });
 
         const kinds = Object.keys(DEFENDERS) as DefenderKind[];
         kinds.forEach((kind, i) => {
