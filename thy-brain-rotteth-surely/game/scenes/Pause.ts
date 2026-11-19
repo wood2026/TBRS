@@ -1,5 +1,6 @@
 import { endAttempt } from '../battle.js';
 import { game } from '../engine.js';
+import { musicButton } from '../music.js';
 
 /**
  * The pause menu, opened over play by the pause button (`game.ui.pauseButton()` in Play.ts) or by P or Escape:
@@ -22,7 +23,7 @@ export const Pause = {
         game.ui.button({ parent: menu, h: 80, text: 'Resume', style: 'good', icon: 'play', onClick: () => game.scenes.pop() });
         game.ui.button({ parent: menu, h: 72, text: 'End attempt', icon: 'restart', onClick: () => { endAttempt(false); game.scenes.go('gameover'); } });
         game.ui.button({ parent: menu, h: 72, text: 'Title', icon: 'home', onClick: () => { endAttempt(false); game.scenes.go('gameover'); } });
-        game.ui.muteButton();
+        musicButton();
         menu.ui.y = -H;
         game.tween.to(menu.ui, { y: 0 }, { duration: 0.35, ease: 'easeOutBack' });
         game.step('pause', () => {

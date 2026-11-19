@@ -3,4 +3,5 @@ dist/
 phaser/
 game/shots/
 game/play/
+/game/assets/audio/
 .phaser/

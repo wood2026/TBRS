@@ -15,7 +15,7 @@ export const BEHAVIORS = {
     relentless: { speed: 0.95, seek: 0, threshold: 100, engage: 0.2, resolve: 5, slow: 0.85, avoid: 0.2, color: '#6faee8' },
 } satisfies Record<Behavior, { speed: number; seek: number; threshold: number; engage: number; resolve: number; slow: number; avoid: number; color: string }>;
 export const ECONOMY = { capacity: 12 };
-export const BATTLE = { brainAttackRange: 28, brainHealth: 100, leakDamage: 20, firstSpawnDelay: 0.8, roundDelay: 2.5, dialogueSeconds: 4,
+export const BATTLE = { brainAttackRange: 28, brainHealth: 100, leakDamage: 20, firstSpawnDelay: 0.8, roundDelay: 2.5,
     brain: { x: 190, y: 316 }, breachRadius: 28 };
 
 

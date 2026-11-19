@@ -1,4 +1,6 @@
 import { game } from '../engine.js';
+import { musicButton } from '../music.js';
+import { showReferences } from '../dialogue/references.js';
 import assets from '../assets.json';
 
 /**
@@ -30,24 +32,32 @@ const designed = (): TitlePlayer | null => {
 export const Title = {
     name: 'title',
     enter(): void {
+        musicButton();
+        const references = () => {
+            game.ui.button({ anchor: 'bottom', y: -82, x: -240, h: 52, text: 'References & Credits', onClick: showReferences });
+        };
         const player = designed();
         if (player) {
             player.play(game.assets.get('title-screen'), { next: 'play', wait: () => game.assets.load(assets, { pack: 'game' }) });
+            references();
             return;
         }
-        const W = game.screen.width, H = game.screen.height;
-        game.background.gradient('#141a3a', '#3a2a5a');
-        // The name in the skin's `heading`, and Play in its `good` colour (main.ts chooses the skin).
-        game.ui.label({ anchor: 'center', y: -110, w: Math.min(W - 128, 1080), h: 96, text: NAME, style: 'heading' });
+        game.background.picture('title-background', 'cover');
+        if (game.assets.has('logo')) {
+            game.spawn({ id: 'title-logo', texture: 'logo', x: 398, y: 282, width: 594, layer: 'world' });
+        } else {
+            game.ui.label({ anchor: 'center', y: -110, w: 960, h: 96, text: NAME, style: 'heading' });
+        }
         let starting = false;
         const start = (): void => {
             if (starting) return;
             starting = true;
             void game.assets.load(assets, { pack: 'game' }).then(() => game.scenes.go('gameover'));
         };
-        game.ui.button({ anchor: 'center', y: 80, h: 72, text: 'Progression', style: 'good', icon: 'play', onClick: start });
+        game.ui.button({ anchor: 'center', y: 136, x: -240, h: 64, text: 'Progression', style: 'good', icon: 'play', onClick: start });
+        references();
         game.step('title', () => {
-            if (game.input.keyPressed('Space') || game.input.keyPressed('Enter')) start();
+            if (!game.ui.modalTop && !game.ui.focus && (game.input.keyPressed('Space') || game.input.keyPressed('Enter'))) start();
         });
     },
 };

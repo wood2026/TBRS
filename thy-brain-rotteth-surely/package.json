@@ -4,6 +4,13 @@
   "type": "module",
   "description": "Thy Brain Rotteth Surely: a Phaser AE game",
   "scripts": {
+    "prebuild": "node scripts/stage-music.mjs",
+    "presmoke": "node scripts/stage-music.mjs",
+    "preplay": "node scripts/stage-music.mjs",
+    "preserve": "node scripts/stage-music.mjs",
+    "prepublish": "node scripts/stage-music.mjs",
+    "prelook": "node scripts/stage-music.mjs",
+    "precheck": "node scripts/stage-music.mjs",
     "test": "node --import ./phaser/node_modules/tsx/dist/loader.mjs --test tests/combat.test.ts",
     "build": "node phaser/bin/bake.mjs build game dist",
     "smoke": "node phaser/bin/bake.mjs smoke game",

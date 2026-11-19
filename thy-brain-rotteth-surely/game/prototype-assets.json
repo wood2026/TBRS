@@ -1,0 +1,337 @@
+{
+  "baseURL": "./",
+  "packs": {
+    "title": [
+      {
+        "kind": "image",
+        "key": "cc0-badge",
+        "url": "prototype-art/cc0.png",
+        "w": 88,
+        "h": 88,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "title-background",
+        "url": "prototype-art/title-background.webp",
+        "w": 1280,
+        "h": 720,
+        "atlas": false
+      },
+      {
+        "kind": "image",
+        "key": "logo",
+        "url": "prototype-art/logo.png",
+        "w": 467,
+        "h": 225,
+        "atlas": true
+      }
+    ],
+    "game": [
+      {
+        "kind": "image",
+        "key": "combat-background",
+        "url": "prototype-art/combat-background.webp",
+        "w": 1280,
+        "h": 720,
+        "atlas": false
+      },
+      {
+        "kind": "image",
+        "key": "upgrade-background",
+        "url": "prototype-art/upgrade-background.webp",
+        "w": 1280,
+        "h": 720,
+        "atlas": false
+      },
+      {
+        "kind": "image",
+        "key": "brain-healthy",
+        "url": "prototype-art/brain-healthy.png",
+        "w": 229,
+        "h": 176,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "brain-hurt",
+        "url": "prototype-art/brain-hurt.png",
+        "w": 228,
+        "h": 175,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "brain-critical",
+        "url": "prototype-art/brain-critical.png",
+        "w": 229,
+        "h": 175,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "brain-defeated",
+        "url": "prototype-art/brain-defeated.png",
+        "w": 274,
+        "h": 196,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "reading",
+        "url": "prototype-art/reading.png",
+        "w": 162,
+        "h": 161,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "exercise",
+        "url": "prototype-art/exercise.png",
+        "w": 136,
+        "h": 153,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "sleep",
+        "url": "prototype-art/sleep.png",
+        "w": 155,
+        "h": 161,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "social",
+        "url": "prototype-art/social.png",
+        "w": 147,
+        "h": 165,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "mindfulness",
+        "url": "prototype-art/mindfulness.png",
+        "w": 140,
+        "h": 161,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "aggressive",
+        "url": "prototype-art/aggressive.png",
+        "w": 175,
+        "h": 164,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "opportunistic",
+        "url": "prototype-art/opportunistic.png",
+        "w": 137,
+        "h": 154,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "evasive",
+        "url": "prototype-art/evasive.png",
+        "w": 144,
+        "h": 160,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "relentless",
+        "url": "prototype-art/relentless.png",
+        "w": 201,
+        "h": 155,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "impact",
+        "url": "prototype-art/impact.png",
+        "w": 121,
+        "h": 72,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "brain-impact",
+        "url": "prototype-art/brain-impact.png",
+        "w": 117,
+        "h": 77,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "sprint",
+        "url": "prototype-art/sprint.png",
+        "w": 123,
+        "h": 63,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "healing",
+        "url": "prototype-art/healing.png",
+        "w": 121,
+        "h": 63,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "buff",
+        "url": "prototype-art/buff.png",
+        "w": 114,
+        "h": 67,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "pulse",
+        "url": "prototype-art/pulse.png",
+        "w": 117,
+        "h": 67,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "portrait-brain",
+        "url": "prototype-art/portrait-brain.png",
+        "w": 127,
+        "h": 75,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "portrait-inner-voice",
+        "url": "prototype-art/portrait-inner-voice.png",
+        "w": 117,
+        "h": 97,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-reading",
+        "url": "prototype-art/icon-reading.png",
+        "w": 87,
+        "h": 87,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-exercise",
+        "url": "prototype-art/icon-exercise.png",
+        "w": 86,
+        "h": 87,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-sleep",
+        "url": "prototype-art/icon-sleep.png",
+        "w": 85,
+        "h": 87,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-social",
+        "url": "prototype-art/icon-social.png",
+        "w": 85,
+        "h": 88,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-mindfulness",
+        "url": "prototype-art/icon-mindfulness.png",
+        "w": 82,
+        "h": 88,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-movement",
+        "url": "prototype-art/icon-movement.png",
+        "w": 85,
+        "h": 80,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-insight",
+        "url": "prototype-art/icon-insight.png",
+        "w": 86,
+        "h": 79,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-health",
+        "url": "prototype-art/icon-health.png",
+        "w": 84,
+        "h": 80,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-resilience",
+        "url": "prototype-art/icon-resilience.png",
+        "w": 84,
+        "h": 81,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "icon-focus",
+        "url": "prototype-art/icon-focus.png",
+        "w": 84,
+        "h": 81,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "outcome-victory",
+        "url": "prototype-art/outcome-victory.png",
+        "w": 347,
+        "h": 151,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "outcome-defeat",
+        "url": "prototype-art/outcome-defeat.png",
+        "w": 341,
+        "h": 151,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "outcome-complete",
+        "url": "prototype-art/outcome-complete.png",
+        "w": 349,
+        "h": 151,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "thumbnail",
+        "url": "prototype-art/thumbnail.png",
+        "w": 143,
+        "h": 133,
+        "atlas": true
+      },
+      {
+        "kind": "image",
+        "key": "favicon",
+        "url": "prototype-art/favicon.png",
+        "w": 32,
+        "h": 29,
+        "atlas": true
+      }
+    ]
+  }
+}

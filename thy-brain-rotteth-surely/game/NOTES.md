@@ -5,11 +5,27 @@
 - Focus is attempt-only; Insight and all unlocked nodes persist via localStorage (progression-v1).
 - Keys 1..5 recruit Reading, Exercise, Sleep, Social Connection, Mindfulness when unlocked.
 - B also recruits Reading. Click a defender to inspect; P/Escape pauses.
+- Music on/off is at the upper right. The preference persists and playback starts after the first interaction.
 - Upgrades use Insight only on the tree screen; repeat levels cost more. Unit unlocks are one-time.
 - Tree: wheel, Up/Down or drag scrolls. Click a node, then Purchase selected.
 - Node colors: gray locked, neutral available, green affordable, blue purchased/unlocked. Levels remain visible.
 - Only the root is visible initially; purchases reveal connected branches.
 - Reset save requires two clicks and affects progression only. Older saves receive zero levels for new nodes.
+
+## Prototype art
+- The supplied title, combat and upgrade backgrounds load from prototype-assets.json with the sprite crops.
+- Combat keeps the arena's illustrated Brain on the left. Its HUD icon shows health states, and defeats show its ruined art.
+- Character crops are single poses. Impact, sprint, healing, buff and slow-pulse overlays show action.
+- The thumbnail and favicon files are in prototype-art for packaging or hosting.
+
+## Story and sources
+- Round 1 dialogue appears at the opening, first enemy, first Reading recruit and first wave clear.
+- The results screen carries the round 1 evidence check, first movement/sleep purchases, Social Connection
+  and Mindfulness unlocks, and the round 5 ending. First-time dialogue is tracked in progression-v1.
+- Tab to a Source button and press Enter, or click/tap it. A source opened in play holds combat until closed.
+- Title > References & Credits includes ten full citations, the complete dialogue and the CC0 music credit.
+- dialogue/rounds.ts holds the exchanges, sources.ts holds citation records, panel.ts queues combat dialogue,
+  and references.ts displays source notes, results exchanges and the bibliography.
 
 ## Brain attacks and roles
 - Enemies reaching the brain remain alive and attack with their own damage and attack interval.
@@ -29,6 +45,7 @@
 - progression/currency.ts: attempt resources and currency payouts.
 - progression/state.ts: save validation/migration, purchases, attempt settlements and permanent progression.
 - combat/units.ts: movement, melee, brain approach positions, role abilities and separation.
+- music.ts: screen tracks, sequential fades and the saved music preference.
 - battle.ts: live purchases, upgraded stats, timed waves, brain damage, rewards and outcomes.
 - scenes/GameOver.ts: upgrade tree and detail panel. scenes/Play.ts: combat UI.
 

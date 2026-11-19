@@ -1,7 +1,78 @@
-export const ROUND_INTROS = [
- {speaker:'Inner voice',lines:['Every distraction leaves something behind.','Even failure can teach us how to begin again.']},
- {speaker:'Inner voice',lines:['The habits remain when the moment passes.','A stronger mind can still feel the noise.']},
- {speaker:'Inner voice',lines:['The noise has learned new ways inside.','We are learning, too.']},
- {speaker:'Inner voice',lines:['Progress is not a straight line.','Keep what you learned. Let the rest pass.']},
- {speaker:'Inner voice',lines:['One final storm before the quiet.','Clarity is a practice, not a destination.']},
-];
+import type { SourceId } from './sources.js';
+
+type Line = { speaker: 'Inner Voice' | 'Brain'; text: string; sources?: SourceId[]; context?: SourceId[] };
+type Exchange = { title: string; lines: Line[] };
+
+export const STORY = {
+    opening: {
+        title: 'A convenient suspect',
+        lines: [
+            { speaker: 'Inner Voice', text: 'Ideas used to come easily. Then came the endless scroll. J’accuse!' },
+            { speaker: 'Brain', text: 'You’ve named a suspect. Can we see the evidence?' },
+        ],
+    },
+    distraction: {
+        title: 'First distraction',
+        lines: [
+            { speaker: 'Inner Voice', text: 'A clip that asks nothing of me. How considerate.', sources: ['yousef'] },
+        ],
+    },
+    reading: {
+        title: 'Recruiting Reading',
+        lines: [
+            { speaker: 'Brain', text: 'Reading’s here. Now you have to decide what to do with your Focus.' },
+        ],
+    },
+    wave: {
+        title: 'First wave cleared',
+        lines: [
+            { speaker: 'Brain', text: 'Remember the plan. Decide when to spend. That’s executive function at work.', sources: ['dictionary'] },
+        ],
+    },
+    scores: {
+        title: 'What did the tests measure?',
+        lines: [
+            { speaker: 'Inner Voice', text: 'Some school scores fell. Have I found my proof?', sources: ['neves'] },
+            { speaker: 'Brain', text: 'You found a change in school scores. The older Danish tests showed modest gains.', sources: ['teasdale'] },
+        ],
+    },
+    exercise: {
+        title: 'Making room for movement',
+        lines: [
+            { speaker: 'Brain', text: 'Fewer young teens met the fitness benchmark in one U.S. survey.', sources: ['gahche'], context: ['fryar'] },
+            { speaker: 'Inner Voice', text: 'Fitness matters, then. Send in the runner.', sources: ['diamond'] },
+        ],
+    },
+    sleep: {
+        title: 'One more clip',
+        lines: [
+            { speaker: 'Inner Voice', text: 'One more clip?' },
+            { speaker: 'Brain', text: 'Short on sleep? Good luck keeping that plan straight.', sources: ['diamond'], context: ['ford', 'cdc'] },
+        ],
+    },
+    social: {
+        title: 'Social Connection',
+        lines: [
+            { speaker: 'Brain', text: 'Feeling alone can make planning harder. Put this one near an ally.', sources: ['diamond'], context: ['apa'] },
+        ],
+    },
+    mindfulness: {
+        title: 'Mindfulness',
+        lines: [
+            { speaker: 'Brain', text: 'Stress and low mood can make it harder to think clearly.', sources: ['diamond'] },
+            { speaker: 'Inner Voice', text: 'One thing at a time, dear Brain. A pulse should buy us a moment.' },
+        ],
+    },
+    ending: {
+        title: 'Who rotteth the brain?',
+        lines: [
+            { speaker: 'Inner Voice', text: 'Who rotteth the brain, then? Was it the feed?' },
+            { speaker: 'Brain', text: 'Perhaps. Sleep, fitness, stress and company all deserve a look.', sources: ['diamond'] },
+            { speaker: 'Inner Voice', text: 'I came for a culprit. I leave with a bedtime and a walking companion.' },
+        ],
+    },
+} satisfies Record<string, Exchange>;
+
+export type StoryId = keyof typeof STORY;
+export const STORY_IDS = Object.keys(STORY) as StoryId[];
+export const exchange = (id: StoryId): Exchange => STORY[id];

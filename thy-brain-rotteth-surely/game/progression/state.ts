@@ -1,6 +1,7 @@
 import { UPGRADES, upgradeCost, type Upgrade, type UpgradeId } from './upgrades.js';
-export type Profile = { version:1; insight:number; levels:Record<UpgradeId,number>; round:number; waves:number; victories:number; attempts:number; storyComplete:boolean; active:boolean; lastResult:string };
-const blank = ():Profile => ({version:1,insight:0,levels:Object.fromEntries(UPGRADES.map(u=>[u.id,0])),round:1,waves:0,victories:0,attempts:0,storyComplete:false,active:false,lastResult:'A new beginning'});
+import { STORY_IDS, type StoryId } from '../dialogue/rounds.js';
+export type Profile = { version:1; insight:number; levels:Record<UpgradeId,number>; round:number; waves:number; victories:number; attempts:number; storyComplete:boolean; active:boolean; lastResult:string; storySeen: StoryId[] };
+const blank = ():Profile => ({version:1,insight:0,levels:Object.fromEntries(UPGRADES.map(u=>[u.id,0])),round:1,waves:0,victories:0,attempts:0,storyComplete:false,active:false,lastResult:'A new beginning',storySeen:[]});
 export const profile:Profile = blank();
 let persist = (_value:Profile):void => {};
 export function saveProgress():void { persist(JSON.parse(JSON.stringify(profile)) as Profile); }
@@ -12,9 +13,16 @@ export function loadProgress(value:unknown, write:(value:Profile)=>void):void {
   profile.waves=integer(p.waves); profile.victories=integer(p.victories); profile.attempts=integer(p.attempts);
   profile.storyComplete=p.storyComplete===true; profile.lastResult=typeof p.lastResult==='string'?p.lastResult:'Resume';
   for(const u of UPGRADES) profile.levels[u.id]=Math.min(u.max ?? 100,integer(p.levels?.[u.id]));
+  if (Array.isArray(p.storySeen)) profile.storySeen = STORY_IDS.filter(id => p.storySeen.includes(id));
   if(p.active) profile.lastResult='Attempt interrupted. Earned Insight was kept; retry this round.';
  }
  saveProgress();
+}
+export function markStorySeen(id: StoryId): boolean {
+ if (profile.storySeen.includes(id)) return false;
+ profile.storySeen.push(id);
+ saveProgress();
+ return true;
 }
 export function resetProgress():void { Object.assign(profile,blank()); saveProgress(); }
 export function addInsight(amount:number):void { profile.insight+=amount; saveProgress(); }
