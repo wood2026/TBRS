@@ -48,6 +48,8 @@ as a pixel-art studio, and keeps working after each publish. **Give the designer
 
 ## Commands
 
+Increment the version in `package.json` whenever a game update is ready for playtesting. The title screen reads this value so testers can identify the build.
+
 Run them from this folder.
 
 - `npm run -s build`: **the gate.** Strict TypeScript, the game's import rules and the bundle, into `dist/`. Iterate

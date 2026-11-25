@@ -2,6 +2,7 @@ import { game } from '../engine.js';
 import { musicButton } from '../music.js';
 import { showReferences } from '../dialogue/references.js';
 import assets from '../assets.json';
+import { version } from '../../package.json';
 
 /**
  * The title screen: the first thing the player sees.
@@ -33,6 +34,9 @@ export const Title = {
     name: 'title',
     enter(): void {
         musicButton();
+        game.text(`v${version}`, game.screen.width - 28, game.screen.height - 28, {
+            align: 'right', size: 18, color: '#f5e8ff', stroke: { color: '#151024', width: 4 },
+        });
         const references = () => {
             game.ui.button({ anchor: 'bottom', y: -82, x: -240, h: 52, text: 'References & Credits', onClick: showReferences });
         };
