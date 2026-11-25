@@ -30,8 +30,8 @@
     "game": [
       {
         "kind": "image",
-        "key": "combat-background",
-        "url": "prototype-art/combat-background.webp",
+        "key": "battlefield-forest",
+        "url": "prototype-art/battlefield-forest-clean.jpg",
         "w": 1280,
         "h": 720,
         "atlas": false
@@ -39,7 +39,7 @@
       {
         "kind": "image",
         "key": "battlefield-crossroads",
-        "url": "prototype-art/battlefield-crossroads.jpg",
+        "url": "prototype-art/battlefield-crossroads-clean.jpg",
         "w": 1280,
         "h": 720,
         "atlas": false
@@ -47,7 +47,7 @@
       {
         "kind": "image",
         "key": "battlefield-archive",
-        "url": "prototype-art/battlefield-archive.jpg",
+        "url": "prototype-art/battlefield-archive-clean.jpg",
         "w": 1280,
         "h": 720,
         "atlas": false
@@ -55,7 +55,7 @@
       {
         "kind": "image",
         "key": "battlefield-cloister",
-        "url": "prototype-art/battlefield-cloister.jpg",
+        "url": "prototype-art/battlefield-cloister-clean.jpg",
         "w": 1280,
         "h": 720,
         "atlas": false
@@ -63,7 +63,7 @@
       {
         "kind": "image",
         "key": "battlefield-sanctuary",
-        "url": "prototype-art/battlefield-sanctuary.jpg",
+        "url": "prototype-art/battlefield-sanctuary-clean.jpg",
         "w": 1280,
         "h": 720,
         "atlas": false

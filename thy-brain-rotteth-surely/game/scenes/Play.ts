@@ -4,7 +4,7 @@ import { profile } from '../progression/state.js';
 import { game } from '../engine.js';
 import { musicButton } from '../music.js';
 import { listen, tapped } from '../input.js';
-import { playStory } from '../dialogue/panel.js';
+import { playOpeningConversation, playStory } from '../dialogue/panel.js';
 import type { StoryId } from '../dialogue/rounds.js';
 import { run, resetRun, buyDefender, stepBattle } from '../battle.js';
 import { BEHAVIORS, type Behavior } from '../combat/config.js';
@@ -13,7 +13,7 @@ let stopListening = (): void => {};
 
 const ROLE_EFFECTS: Partial<Record<string, string>> = { exercise: 'sprint', sleep: 'healing', social: 'buff', mindfulness: 'pulse' };
 const BATTLEFIELDS = [
-    'combat-background', 'battlefield-crossroads', 'battlefield-archive', 'battlefield-cloister', 'battlefield-sanctuary',
+    'battlefield-forest', 'battlefield-crossroads', 'battlefield-archive', 'battlefield-cloister', 'battlefield-sanctuary',
 ];
 
 const DISTRACTION_LABELS: [Behavior, string][] = [
@@ -28,11 +28,7 @@ const screenY = (y: number) => 244 + (y - 125) * 0.69;
 const UNIT_ATTACK_POSE_TIME = 0.18;
 const UNIT_HURT_POSE_TIME = 0.18;
 const BRAIN_FLASH_TIME = 0.18;
-const BRAIN_CRACKS = [
-    [[110, 204], [101, 228], [117, 239], [110, 260], [123, 272]],
-    [[170, 223], [153, 252], [165, 269], [147, 288], [154, 304]],
-    [[67, 254], [78, 275], [65, 295], [83, 307], [86, 324]],
-];
+const BRAIN_BASE = { x: 151, y: 322, width: 322, height: 248 };
 
 function makeUnitArt(unit: Unit) {
     const texture = unit.kind === 'distraction' ? unit.behavior : unit.kind;
@@ -52,13 +48,16 @@ export const Play = {
         game.background.picture(BATTLEFIELDS[Math.min(run.round, BATTLEFIELDS.length) - 1], 'cover');
         const field = game.graphics({ layer: 'back' });
         const markers = game.graphics({ layer: 'front' });
-        const brainDamage = game.graphics({ layer: 'back' });
+        const brain = game.spawn({ id: 'brain-base', texture: 'brain-healthy', ...BRAIN_BASE, layer: 'world', z: -3 });
+        const minorDamage = game.spawn({
+            id: 'brain-light-damage', texture: 'brain-hurt', ...BRAIN_BASE, layer: 'world', z: -2,
+            alpha: 0.55, visible: false,
+        });
         const objective = game.spawn({ id: 'brain-condition', texture: 'brain-healthy', x: 1051, y: 36, width: 69, layer: 'hud' });
-        const brainImpact = game.spawn({ id: 'brain-damage-flash', texture: 'brain-impact', x: 121, y: 264, width: 176, layer: 'world', visible: false });
+        const brainImpact = game.spawn({ id: 'brain-damage-flash', texture: 'brain-impact', x: 146, y: 307, width: 176, layer: 'world', visible: false });
         const sprites = new Map<number, ReturnType<typeof makeUnitArt>>();
         let brainFlash = 0;
         let previousHealth = run.hp;
-        let previousDamage = -1;
         const hud = game.text('', 32, 38, { align: 'left', size: 24 });
         const notice = game.text('', 640, 98, { size: 18, color: '#ffd88a', stroke: { color: '#151024', width: 3 } });
         const stats = game.text('', 640, 514, { size: 17, color: '#e1e8fa' });
@@ -78,7 +77,6 @@ export const Play = {
                 onClick: () => buyDefender(kind),
             });
         });
-        const battleStory = new Set<StoryId>();
         game.ui.pauseButton();
         musicButton();
         stopListening = listen();
@@ -97,30 +95,17 @@ export const Play = {
                 : 'Select a defender by clicking it. Focus recruits defenders. Insight buys permanent upgrades after this attempt.';
 
             const health = run.hp / run.maxHp;
-            const damage = health > 0.75 ? 0 : health > 0.5 ? 1 : health > 0.25 ? 2 : 3;
-            if (damage !== previousDamage) {
-                previousDamage = damage;
-                brainDamage.clear();
-                brainDamage.draw(ctx => {
-                    for (const crack of BRAIN_CRACKS.slice(0, damage)) {
-                        ctx.beginPath();
-                        crack.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
-                        ctx.lineJoin = 'round';
-                        ctx.strokeStyle = '#3b133f';
-                        ctx.lineWidth = 5;
-                        ctx.stroke();
-                        ctx.strokeStyle = damage === 3 ? '#ff9a67' : '#ce5a9a';
-                        ctx.lineWidth = damage === 3 ? 2 : 1;
-                        ctx.stroke();
-                    }
-                });
-            }
-            objective.texture = health <= 0 ? 'brain-defeated' : damage === 3 ? 'brain-critical' : damage ? 'brain-hurt' : 'brain-healthy';
+            const lightlyDamaged = health <= 0.75 && health > 0.5;
+            const brainTexture = health > 0.5 ? 'brain-healthy'
+                : health > 0.25 ? 'brain-hurt' : health > 0 ? 'brain-critical' : 'brain-defeated';
+            brain.texture = brainTexture;
+            minorDamage.visible = lightlyDamaged;
+            objective.texture = lightlyDamaged ? 'brain-hurt' : brainTexture;
             brainFlash = run.hp < previousHealth ? BRAIN_FLASH_TIME : Math.max(0, brainFlash - dt);
             previousHealth = run.hp;
-            brainImpact.visible = brainFlash > 0;
+            brainImpact.visible = brainFlash > 0 && health > 0;
             brainImpact.alpha = brainFlash / BRAIN_FLASH_TIME;
-            objective.tint = brainFlash > 0.1 ? '#ffafc4' : damage === 1 ? '#ffc4d8' : '#ffffff';
+            objective.tint = brainFlash > 0.1 ? '#ffafc4' : lightlyDamaged ? '#ffc4d8' : '#ffffff';
 
             const units = [...run.defenders, ...run.enemies];
             const active = new Set(units.map(unit => unit.id));
@@ -184,7 +169,7 @@ export const Play = {
         };
 
         draw(0);
-        if (run.round === 1) playStory(['opening']);
+        playOpeningConversation();
         game.step('play', dt => {
             if (game.ui.modalTop) return;
             if (game.input.keyPressed('Escape') || game.input.keyPressed('KeyP')) { game.scenes.push('pause'); return; }
@@ -196,16 +181,12 @@ export const Play = {
                     Math.abs(tap.x - screenX(defender.x)) < 33 && Math.abs(tap.y - (screenY(defender.y) - 14)) < 37);
                 if (unit) run.selected = unit.id;
             }
-            if (run.round === 1 && run.defenders.some(unit => unit.kind === 'reading')) battleStory.add('reading');
             stepBattle(dt);
-            if (run.round === 1) {
-                if (run.spawned > 0 || run.wave > 0) battleStory.add('distraction');
-                if (run.wave > 0) battleStory.add('wave');
-            }
             draw(dt);
             if (run.phase !== 'combat') {
-                const aftermath: StoryId[] = [...battleStory];
-                if (run.phase === 'defeat') aftermath.unshift('firstFailure');
+                const aftermath: StoryId[] = [];
+                if (run.round === 1 && run.wave > 0) aftermath.push('wave');
+                if (run.phase === 'defeat') aftermath.push('firstFailure');
                 playStory(aftermath, () => game.scenes.go('gameover'));
             }
         });

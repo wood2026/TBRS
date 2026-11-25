@@ -13,14 +13,15 @@
 - Reset save requires two clicks and affects progression only. Older saves receive zero levels for new nodes.
 
 ## Prototype art
-- The original forest opens the campaign. Rounds 2–5 use 1280 × 720 crossroads, archive, cloister and sanctuary art.
-- At 75%, 50% and 25% remaining health, the battlefield Brain gains another crack and its HUD artwork changes.
+- The 1280 × 720 forest, crossroads, archive, cloister and sanctuary backgrounds leave room for a separate Brain sprite.
+- At 75%, 50% and 25% remaining health, the battlefield Brain and HUD change artwork. At zero health, the ruined sprite appears.
 - Existing unit sprites bob while moving, lunge on attacks and recoil on hits. The Brain flashes briefly when damaged.
 - The thumbnail and favicon files are in prototype-art for packaging or hosting.
 
 ## Story and sources
-- The opening plays before round 1 starts. The first enemy, Reading recruitment and first wave clear are
-  queued during round 1 and presented after battle. The first defeat plays once per save before the upgrade screen.
+- A convenient suspect, First distraction and Recruiting Reading play together before the first battle.
+  Existing saves see the complete opening once. First wave cleared plays after the round 1 battle and before
+  First defeat if both are due. The first defeat plays once per save before the upgrade screen.
 - The visual novel dialogue box shows one line and the active speaker's large portrait. Click Next or Continue,
   or press Enter when the button has focus.
 - The results screen carries the round 1 evidence check, first movement/sleep purchases, Social Connection
