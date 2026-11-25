@@ -19,14 +19,16 @@
 - The thumbnail and favicon files are in prototype-art for packaging or hosting.
 
 ## Story and sources
-- Round 1 dialogue appears at the opening, first enemy, first Reading recruit and first wave clear.
-- The combat dialogue box displays large portraits for the speakers alongside the exchange.
+- The opening plays before round 1 starts. The first enemy, Reading recruitment and first wave clear are
+  queued during round 1 and presented after battle. The first defeat plays once per save before the upgrade screen.
+- The visual novel dialogue box shows one line and the active speaker's large portrait. Click Next or Continue,
+  or press Enter when the button has focus.
 - The results screen carries the round 1 evidence check, first movement/sleep purchases, Social Connection
   and Mindfulness unlocks, and the round 5 ending. First-time dialogue is tracked in progression-v1.
 - Tab to a Source button and press Enter, or click/tap it. A source opened in play holds combat until closed.
 - Title > References & Credits includes ten full citations, the complete dialogue and the CC0 music credit.
-- dialogue/rounds.ts holds the exchanges, sources.ts holds citation records, panel.ts queues combat dialogue,
-  and references.ts displays source notes, results exchanges and the bibliography.
+- dialogue/rounds.ts holds the exchanges, sources.ts holds citation records, panel.ts sequences unseen exchanges,
+  and references.ts renders dialogue, source notes and the bibliography.
 
 ## Brain attacks and roles
 - Enemies reaching the brain remain alive and attack with their own damage and attack interval.

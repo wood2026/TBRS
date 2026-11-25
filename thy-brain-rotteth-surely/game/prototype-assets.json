@@ -230,6 +230,22 @@
       },
       {
         "kind": "image",
+        "key": "large-brain",
+        "url": "prototype-art/large-brain.png",
+        "w": 1312,
+        "h": 1199,
+        "atlas": false
+      },
+      {
+        "kind": "image",
+        "key": "large-inner-voice",
+        "url": "prototype-art/large-inner-voice.png",
+        "w": 1312,
+        "h": 1199,
+        "atlas": false
+      },
+      {
+        "kind": "image",
         "key": "portrait-brain",
         "url": "prototype-art/portrait-brain.png",
         "w": 127,

@@ -23,6 +23,13 @@ export const STORY = {
             { speaker: 'Brain', text: "Of course you can't think if that's all you feed me! Try reading! Spend your focus wisely!" },
         ],
     },
+    firstFailure: {
+    title: 'Thy Brain Doth Rot!',
+        lines: [
+            { speaker: 'Inner Voice', text: "Task failed successfully!" },
+            { speaker: 'Brain', text: "Ugh, let's try that again! Prepare better this time!" },
+        ],
+    },
     wave: {
         title: 'First wave cleared',
         lines: [

@@ -4,7 +4,8 @@ import { profile } from '../progression/state.js';
 import { game } from '../engine.js';
 import { musicButton } from '../music.js';
 import { listen, tapped } from '../input.js';
-import { createDialoguePanel } from '../dialogue/panel.js';
+import { playStory } from '../dialogue/panel.js';
+import type { StoryId } from '../dialogue/rounds.js';
 import { run, resetRun, buyDefender, stepBattle } from '../battle.js';
 import { BEHAVIORS, type Behavior } from '../combat/config.js';
 
@@ -77,7 +78,7 @@ export const Play = {
                 onClick: () => buyDefender(kind),
             });
         });
-        const refreshDialogue = createDialoguePanel();
+        const battleStory = new Set<StoryId>();
         game.ui.pauseButton();
         musicButton();
         stopListening = listen();
@@ -180,10 +181,10 @@ export const Play = {
                     ctx.fillRect(x - 18, y - 48, 36 * Math.max(0, unit.hp / unit.maxHp), 5);
                 }
             });
-            refreshDialogue();
         };
 
         draw(0);
+        if (run.round === 1) playStory(['opening']);
         game.step('play', dt => {
             if (game.ui.modalTop) return;
             if (game.input.keyPressed('Escape') || game.input.keyPressed('KeyP')) { game.scenes.push('pause'); return; }
@@ -195,9 +196,18 @@ export const Play = {
                     Math.abs(tap.x - screenX(defender.x)) < 33 && Math.abs(tap.y - (screenY(defender.y) - 14)) < 37);
                 if (unit) run.selected = unit.id;
             }
+            if (run.round === 1 && run.defenders.some(unit => unit.kind === 'reading')) battleStory.add('reading');
             stepBattle(dt);
+            if (run.round === 1) {
+                if (run.spawned > 0 || run.wave > 0) battleStory.add('distraction');
+                if (run.wave > 0) battleStory.add('wave');
+            }
             draw(dt);
-            if (run.phase === 'victory' || run.phase === 'defeat') game.scenes.go('gameover');
+            if (run.phase !== 'combat') {
+                const aftermath: StoryId[] = [...battleStory];
+                if (run.phase === 'defeat') aftermath.unshift('firstFailure');
+                playStory(aftermath, () => game.scenes.go('gameover'));
+            }
         });
     },
     exit(): void { stopListening(); },

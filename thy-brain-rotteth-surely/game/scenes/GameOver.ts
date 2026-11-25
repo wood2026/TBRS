@@ -1,8 +1,8 @@
 import { game } from '../engine.js';
 import { musicButton } from '../music.js';
-import { showExchange } from '../dialogue/references.js';
+import { playStory } from '../dialogue/panel.js';
 import type { StoryId } from '../dialogue/rounds.js';
-import { markStorySeen, profile,visible,unlocked,purchaseUpgrade,resetProgress } from '../progression/state.js';
+import { profile,visible,unlocked,purchaseUpgrade,resetProgress } from '../progression/state.js';
 import { UPGRADES,upgradeCost, type UpgradeId } from '../progression/upgrades.js';
 let scroll=0,selected: UpgradeId='damage';
 const UPGRADE_ART: Record<string, string> = {
@@ -18,9 +18,6 @@ const PURCHASE_STORY: Partial<Record<UpgradeId, StoryId>> = {
  unlock_social: 'social', unlock_mindfulness: 'mindfulness',
 };
 
-function tellStory(id: StoryId) {
- if (markStorySeen(id)) showExchange(id);
-}
 export const GameOver={name:'gameover',enter():void {
  game.background.picture('upgrade-background', 'cover');
  musicButton();
@@ -80,7 +77,7 @@ export const GameOver={name:'gameover',enter():void {
   if (!purchaseUpgrade(selected)) return;
   refresh();
   const story = PURCHASE_STORY[selected];
-  if (story) tellStory(story);
+  if (story) playStory([story]);
  }});
  game.ui.button({anchor:'center',x:170,y:280,h:50,text:profile.storyComplete?'Continue beyond story':`Attempt round ${profile.round}`,style:'good',onClick:()=>game.scenes.go('play')});
  game.ui.button({anchor:'center',x:470,y:280,h:44,text:'Title',onClick:()=>game.scenes.go('title')});
@@ -89,8 +86,10 @@ export const GameOver={name:'gameover',enter():void {
  game.text('Gray locked | Blue purchased | Green affordable',460,610,{size:16,color:'#b3c7d9'});
  if(!game.save.persistent)game.text('Storage unavailable: session progress only',640,698,{size:15,color:'#ffb36b'});
  refresh();
- if (profile.lastResult.startsWith('Victory in round 1.')) tellStory('scores');
- if (profile.storyComplete) tellStory('ending');
+ const resultStory: StoryId[] = [];
+ if (profile.lastResult.startsWith('Victory in round 1.')) resultStory.push('scores');
+ if (profile.storyComplete) resultStory.push('ending');
+ playStory(resultStory);
  game.step('tree',dt=>{
   if (game.ui.modalTop) return;
   const p=game.input.pointer;

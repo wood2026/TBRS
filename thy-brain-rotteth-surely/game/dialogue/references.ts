@@ -6,7 +6,7 @@ type Panel = ReturnType<typeof game.ui.panel>;
 
 const rowStyle = { fill: '#00000000', border: 0, bevel: 0, depth: 0, gloss: 0, shine: 0, shadow: 0 };
 const readingStyle = { font: '18px sans-serif', textCase: 'none', textOutline: 0, textDepth: 0, textShadowY: 0 } as const;
-export const speakerPortrait = { Brain: 'portrait-brain', 'Inner Voice': 'portrait-inner-voice' } as const;
+const speakerPortrait = { Brain: 'large-brain', 'Inner Voice': 'large-inner-voice' } as const;
 
 function openModal(title: string, height: number) {
     const panel = game.ui.window({
@@ -53,27 +53,54 @@ function showSource(id: SourceId) {
     done.ui.focused = true;
 }
 
-export function addExchange(parent: Panel, id: StoryId, portraits = true): void {
-    for (const line of exchange(id).lines) {
-        const height = portraits ? 42 : 34;
-        const row = game.ui.panel({
-            parent, h: height, style: rowStyle, layout: { direction: 'row', padding: 0, gap: 6 },
+export function showExchange(id: StoryId, onComplete?: () => void): void {
+    const { title, lines } = exchange(id);
+    const showLine = (index: number): void => {
+        const line = lines[index];
+        const last = index === lines.length - 1;
+        const stage = game.ui.panel({
+            id: 'story-stage', anchor: 'center', w: 1280, h: 720,
+            style: { ...rowStyle, fill: '#080619d9' },
+            accessibleLabel: title,
+            layout: { padding: { top: 24, bottom: 24, left: 64, right: 64 }, gap: 0, align: 'stretch' },
         });
-        if (portraits) game.ui.label({ parent: row, w: 48, h: height, icon: speakerPortrait[line.speaker], iconSize: 40 });
-        const sourceCount = (line.sources?.length ?? 0) + (line.context?.length ?? 0);
-        const text = line.speaker + ' · ' + line.text;
-        game.ui.label({ parent: row, w: parent.ui.w - (portraits ? 104 : 0) - sourceCount * 112, h: height, text, style: { ...readingStyle, textAlign: 'left' } });
-        for (const source of line.sources ?? []) sourceButton(row, source, text);
-        for (const source of line.context ?? []) sourceButton(row, source, text, 'Context');
-    }
-}
-
-export function showExchange(id: StoryId): void {
-    const { panel, close } = openModal(exchange(id).title, 256);
-    addExchange(panel, id);
-    const done = game.ui.button({ parent: panel, h: 38, text: 'Dismiss', onClick: close });
-    game.ui.modal(panel);
-    done.ui.focused = true;
+        game.ui.label({
+            parent: stage, id: 'story-portrait', h: 494,
+            icon: speakerPortrait[line.speaker], iconSize: 480, accessibleLabel: line.speaker,
+        });
+        const box = game.ui.panel({
+            parent: stage, id: 'story-dialogue', h: 178,
+            style: { fill: '#201330' },
+            layout: { padding: 16, gap: 4, align: 'stretch' },
+        });
+        game.ui.label({
+            parent: box, h: 26, text: line.speaker,
+            style: { ...readingStyle, font: 'bold 22px sans-serif', textAlign: 'left', textColor: '#ffd88a' },
+        });
+        game.ui.textarea({
+            parent: box, h: 66, rows: 2, value: line.text, readOnly: true,
+            accessibleLabel: line.speaker + ': ' + line.text,
+            style: { ...readingStyle, ...rowStyle, font: '22px sans-serif' },
+        });
+        const actions = game.ui.panel({
+            parent: box, h: 42, style: rowStyle,
+            layout: { direction: 'row', padding: 0, gap: 10 },
+        });
+        const advance = game.ui.button({
+            parent: actions, h: 40, text: last ? 'Continue' : 'Next', style: 'good',
+            onClick: () => {
+                game.ui.modal(stage, false);
+                game.roster.kill(stage);
+                if (last) onComplete?.();
+                else showLine(index + 1);
+            },
+        });
+        for (const source of line.sources ?? []) sourceButton(actions, source, line.text);
+        for (const source of line.context ?? []) sourceButton(actions, source, line.text, 'Context');
+        game.ui.modal(stage);
+        advance.ui.focused = true;
+    };
+    showLine(0);
 }
 
 export function showReferences(): void {
