@@ -1,10 +1,11 @@
 import { game } from '../engine.js';
 import { run } from '../battle.js';
 import { markStorySeen, profile } from '../progression/state.js';
-import { addExchange } from './references.js';
-import { type StoryId } from './rounds.js';
+import { addExchange, speakerPortrait } from './references.js';
+import { exchange, type StoryId } from './rounds.js';
 
 const READ_TIME = 6;
+const transparent = { fill: '#00000000', border: 0, bevel: 0, depth: 0, gloss: 0, shine: 0, shadow: 0 };
 
 export function createDialoguePanel(): () => void {
     const pending: StoryId[] = [];
@@ -19,10 +20,21 @@ export function createDialoguePanel(): () => void {
         displayedAt = run.roundTime;
         panel = game.ui.panel({
             id: 'story-strip', anchor: 'center', y: 300, w: 1152, h: 118,
-            layout: { padding: { top: 8, left: 18, right: 18, bottom: 8 }, gap: 2, align: 'stretch' },
+            layout: { direction: 'row', padding: 8, gap: 12, align: 'center' },
         });
-        addExchange(panel, id);
-        game.ui.button({ parent: panel, alignSelf: 'end', h: 30, text: 'Dismiss', onClick: advance });
+        const speakers = new Set(exchange(id).lines.map(line => line.speaker));
+        for (const speaker of speakers) {
+            game.ui.label({
+                parent: panel, id: speakerPortrait[speaker], w: 80, h: 94,
+                icon: speakerPortrait[speaker], iconSize: 72,
+            });
+        }
+        const dialogue = game.ui.panel({
+            parent: panel, w: 1136 - speakers.size * 92, h: 102, style: transparent,
+            layout: { padding: 0, gap: 2, align: 'stretch' },
+        });
+        addExchange(dialogue, id, false);
+        game.ui.button({ parent: dialogue, alignSelf: 'end', h: 30, text: 'Dismiss', onClick: advance });
     };
     const dialogueFocused = () => {
         let focused = game.ui.focus;

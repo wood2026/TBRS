@@ -13,13 +13,14 @@
 - Reset save requires two clicks and affects progression only. Older saves receive zero levels for new nodes.
 
 ## Prototype art
-- The supplied title, combat and upgrade backgrounds load from prototype-assets.json with the sprite crops.
-- Combat keeps the arena's illustrated Brain on the left. Its HUD icon shows health states, and defeats show its ruined art.
-- Character crops are single poses. Impact, sprint, healing, buff and slow-pulse overlays show action.
+- The original forest opens the campaign. Rounds 2–5 use 1280 × 720 crossroads, archive, cloister and sanctuary art.
+- At 75%, 50% and 25% remaining health, the battlefield Brain gains another crack and its HUD artwork changes.
+- Existing unit sprites bob while moving, lunge on attacks and recoil on hits. The Brain flashes briefly when damaged.
 - The thumbnail and favicon files are in prototype-art for packaging or hosting.
 
 ## Story and sources
 - Round 1 dialogue appears at the opening, first enemy, first Reading recruit and first wave clear.
+- The combat dialogue box displays large portraits for the speakers alongside the exchange.
 - The results screen carries the round 1 evidence check, first movement/sleep purchases, Social Connection
   and Mindfulness unlocks, and the round 5 ending. First-time dialogue is tracked in progression-v1.
 - Tab to a Source button and press Enter, or click/tap it. A source opened in play holds combat until closed.
@@ -66,4 +67,3 @@
 - Preview tests snapshot and restore progression; user progression is not left with test grants.
 - Debug: test-snapshot, test-tree, test-restore (restore before reloading); screen; inspect.
 - npm run -s smoke -- --seconds 30 checks browser runtime; npm run -s serve opens localhost:4173.
-- All art is placeholder. No paid assets generated.

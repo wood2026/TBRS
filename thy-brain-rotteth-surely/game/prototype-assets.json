@@ -38,6 +38,38 @@
       },
       {
         "kind": "image",
+        "key": "battlefield-crossroads",
+        "url": "prototype-art/battlefield-crossroads.jpg",
+        "w": 1280,
+        "h": 720,
+        "atlas": false
+      },
+      {
+        "kind": "image",
+        "key": "battlefield-archive",
+        "url": "prototype-art/battlefield-archive.jpg",
+        "w": 1280,
+        "h": 720,
+        "atlas": false
+      },
+      {
+        "kind": "image",
+        "key": "battlefield-cloister",
+        "url": "prototype-art/battlefield-cloister.jpg",
+        "w": 1280,
+        "h": 720,
+        "atlas": false
+      },
+      {
+        "kind": "image",
+        "key": "battlefield-sanctuary",
+        "url": "prototype-art/battlefield-sanctuary.jpg",
+        "w": 1280,
+        "h": 720,
+        "atlas": false
+      },
+      {
+        "kind": "image",
         "key": "upgrade-background",
         "url": "prototype-art/upgrade-background.webp",
         "w": 1280,

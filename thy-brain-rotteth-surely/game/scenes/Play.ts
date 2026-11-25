@@ -11,6 +11,9 @@ import { BEHAVIORS, type Behavior } from '../combat/config.js';
 let stopListening = (): void => {};
 
 const ROLE_EFFECTS: Partial<Record<string, string>> = { exercise: 'sprint', sleep: 'healing', social: 'buff', mindfulness: 'pulse' };
+const BATTLEFIELDS = [
+    'combat-background', 'battlefield-crossroads', 'battlefield-archive', 'battlefield-cloister', 'battlefield-sanctuary',
+];
 
 const DISTRACTION_LABELS: [Behavior, string][] = [
     ['aggressive', 'Pop-up Ads'],
@@ -21,6 +24,14 @@ const DISTRACTION_LABELS: [Behavior, string][] = [
 
 const screenX = (x: number) => 300 + (x - 190) * 0.88;
 const screenY = (y: number) => 244 + (y - 125) * 0.69;
+const UNIT_ATTACK_POSE_TIME = 0.18;
+const UNIT_HURT_POSE_TIME = 0.18;
+const BRAIN_FLASH_TIME = 0.18;
+const BRAIN_CRACKS = [
+    [[110, 204], [101, 228], [117, 239], [110, 260], [123, 272]],
+    [[170, 223], [153, 252], [165, 269], [147, 288], [154, 304]],
+    [[67, 254], [78, 275], [65, 295], [83, 307], [86, 324]],
+];
 
 function makeUnitArt(unit: Unit) {
     const texture = unit.kind === 'distraction' ? unit.behavior : unit.kind;
@@ -30,21 +41,23 @@ function makeUnitArt(unit: Unit) {
     const effect = effectTexture
         ? game.spawn({ texture: effectTexture, width: 79, layer: 'world', z: -1, visible: false })
         : undefined;
-    return { body, impact, effect };
+    return { body, impact, effect, stride: 0, previousHp: unit.hp, hurtTime: 0 };
 }
 
 export const Play = {
     name: 'play',
     enter(): void {
         resetRun();
-        game.background.picture('combat-background', 'cover');
+        game.background.picture(BATTLEFIELDS[Math.min(run.round, BATTLEFIELDS.length) - 1], 'cover');
         const field = game.graphics({ layer: 'back' });
         const markers = game.graphics({ layer: 'front' });
+        const brainDamage = game.graphics({ layer: 'back' });
         const objective = game.spawn({ id: 'brain-condition', texture: 'brain-healthy', x: 1051, y: 36, width: 69, layer: 'hud' });
-        const brainImpact = game.spawn({ texture: 'brain-impact', x: 169, y: 278, width: 176, layer: 'world', visible: false });
+        const brainImpact = game.spawn({ id: 'brain-damage-flash', texture: 'brain-impact', x: 121, y: 264, width: 176, layer: 'world', visible: false });
         const sprites = new Map<number, ReturnType<typeof makeUnitArt>>();
         let brainFlash = 0;
         let previousHealth = run.hp;
+        let previousDamage = -1;
         const hud = game.text('', 32, 38, { align: 'left', size: 24 });
         const notice = game.text('', 640, 98, { size: 18, color: '#ffd88a', stroke: { color: '#151024', width: 3 } });
         const stats = game.text('', 640, 514, { size: 17, color: '#e1e8fa' });
@@ -83,10 +96,30 @@ export const Play = {
                 : 'Select a defender by clicking it. Focus recruits defenders. Insight buys permanent upgrades after this attempt.';
 
             const health = run.hp / run.maxHp;
-            objective.texture = health > 0.75 ? 'brain-healthy' : health > 0.35 ? 'brain-hurt' : health > 0 ? 'brain-critical' : 'brain-defeated';
-            brainFlash = run.hp < previousHealth ? 0.18 : Math.max(0, brainFlash - dt);
+            const damage = health > 0.75 ? 0 : health > 0.5 ? 1 : health > 0.25 ? 2 : 3;
+            if (damage !== previousDamage) {
+                previousDamage = damage;
+                brainDamage.clear();
+                brainDamage.draw(ctx => {
+                    for (const crack of BRAIN_CRACKS.slice(0, damage)) {
+                        ctx.beginPath();
+                        crack.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+                        ctx.lineJoin = 'round';
+                        ctx.strokeStyle = '#3b133f';
+                        ctx.lineWidth = 5;
+                        ctx.stroke();
+                        ctx.strokeStyle = damage === 3 ? '#ff9a67' : '#ce5a9a';
+                        ctx.lineWidth = damage === 3 ? 2 : 1;
+                        ctx.stroke();
+                    }
+                });
+            }
+            objective.texture = health <= 0 ? 'brain-defeated' : damage === 3 ? 'brain-critical' : damage ? 'brain-hurt' : 'brain-healthy';
+            brainFlash = run.hp < previousHealth ? BRAIN_FLASH_TIME : Math.max(0, brainFlash - dt);
             previousHealth = run.hp;
             brainImpact.visible = brainFlash > 0;
+            brainImpact.alpha = brainFlash / BRAIN_FLASH_TIME;
+            objective.tint = brainFlash > 0.1 ? '#ffafc4' : damage === 1 ? '#ffc4d8' : '#ffffff';
 
             const units = [...run.defenders, ...run.enemies];
             const active = new Set(units.map(unit => unit.id));
@@ -102,12 +135,28 @@ export const Play = {
                 const art = sprites.get(unit.id) ?? makeUnitArt(unit);
                 sprites.set(unit.id, art);
                 const x = screenX(unit.x), y = screenY(unit.y);
-                art.body.x = x;
-                art.body.y = y - 14;
+                const speed = Math.hypot(unit.vx, unit.vy);
+                const moving = Math.min(1, speed / 35);
+                art.stride += dt * Math.min(20, speed * 0.24);
+                const stride = Math.sin(art.stride);
+                const sinceAttack = unit.cooldown > 0 ? 1 / unit.attackSpeed - unit.cooldown : Infinity;
+                const attack = Math.max(0, 1 - sinceAttack / UNIT_ATTACK_POSE_TIME);
+                const forward = unit.kind === 'distraction' ? -1 : 1;
+                const target = attack > 0 ? units.find(other => other.id === unit.targetId) : undefined;
+                const strikeDirection = target ? Math.sign(target.x - unit.x) || forward : forward;
+                art.hurtTime = unit.hp < art.previousHp ? UNIT_HURT_POSE_TIME : Math.max(unit.flash, art.hurtTime - dt);
+                art.previousHp = unit.hp;
+                const hurt = art.hurtTime / UNIT_HURT_POSE_TIME;
+                art.body.x = x + strikeDirection * attack * 8 - forward * hurt * 4;
+                art.body.y = y - 14 - Math.abs(stride) * moving * 4;
+                art.body.rot = stride * moving * 0.075 + strikeDirection * attack * 0.14;
+                art.body.sy = 1 + moving * stride * 0.045 - hurt * 0.1;
+                art.body.tint = hurt > 0.5 ? '#ffc2c8' : '#ffffff';
                 art.body.z = y;
                 art.impact.x = x;
                 art.impact.y = y - 15;
-                art.impact.visible = unit.flash > 0;
+                art.impact.visible = hurt > 0;
+                art.impact.alpha = hurt;
                 if (art.effect) {
                     const sprinting = unit.kind === 'exercise' && Math.hypot(unit.vx, unit.vy) > unit.speed * 1.1;
                     art.effect.visible = sprinting || unit.kind === 'sleep' || unit.kind === 'social'

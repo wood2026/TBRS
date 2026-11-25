@@ -6,6 +6,7 @@ type Panel = ReturnType<typeof game.ui.panel>;
 
 const rowStyle = { fill: '#00000000', border: 0, bevel: 0, depth: 0, gloss: 0, shine: 0, shadow: 0 };
 const readingStyle = { font: '18px sans-serif', textCase: 'none', textOutline: 0, textDepth: 0, textShadowY: 0 } as const;
+export const speakerPortrait = { Brain: 'portrait-brain', 'Inner Voice': 'portrait-inner-voice' } as const;
 
 function openModal(title: string, height: number) {
     const panel = game.ui.window({
@@ -52,16 +53,16 @@ function showSource(id: SourceId) {
     done.ui.focused = true;
 }
 
-export function addExchange(parent: Panel, id: StoryId): void {
+export function addExchange(parent: Panel, id: StoryId, portraits = true): void {
     for (const line of exchange(id).lines) {
+        const height = portraits ? 42 : 34;
         const row = game.ui.panel({
-            parent, h: 34, style: rowStyle, layout: { direction: 'row', padding: 0, gap: 6 },
+            parent, h: height, style: rowStyle, layout: { direction: 'row', padding: 0, gap: 6 },
         });
-        const portrait = line.speaker === 'Brain' ? 'portrait-brain' : 'portrait-inner-voice';
-        game.ui.label({ parent: row, w: 42, h: 32, icon: portrait, iconSize: 32 });
+        if (portraits) game.ui.label({ parent: row, w: 48, h: height, icon: speakerPortrait[line.speaker], iconSize: 40 });
         const sourceCount = (line.sources?.length ?? 0) + (line.context?.length ?? 0);
         const text = line.speaker + ' · ' + line.text;
-        game.ui.label({ parent: row, w: parent.ui.w - 100 - sourceCount * 112, h: 32, text, style: { ...readingStyle, textAlign: 'left' } });
+        game.ui.label({ parent: row, w: parent.ui.w - (portraits ? 104 : 0) - sourceCount * 112, h: height, text, style: { ...readingStyle, textAlign: 'left' } });
         for (const source of line.sources ?? []) sourceButton(row, source, text);
         for (const source of line.context ?? []) sourceButton(row, source, text, 'Context');
     }
