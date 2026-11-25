@@ -3,7 +3,7 @@ import { createUnit, act, separate, support, type Unit } from './combat/units.js
 import { ECONOMY, BATTLE } from './combat/config.js';
 import { wavesForRound } from './combat/waves.js';
 import { profile, beginAttempt, finishAttempt, addInsight, saveProgress } from './progression/state.js';
-import { CURRENCY, startingFocus, focusReward } from './progression/currency.js';
+import { CURRENCY, startingFocus, focusReward, resourceDebug } from './progression/currency.js';
 export const COST=CURRENCY.recruit;
 export const run={round:1,wave:0,hp:100,maxHp:100,focus:80,phase:'combat' as 'combat'|'victory'|'defeat',roundTime:0,
  defenders:[] as Unit[],enemies:[] as Unit[],selected:null as number|null,spawned:0,spawnTimer:0,kills:0,leaks:0,losses:0,nextId:1,message:'',insightEarned:0,progressTimer:0};
@@ -23,9 +23,10 @@ export function buyDefender(kind:DefenderKind='reading'):void {
  if(run.phase!=='combat') return;
  if(kind!=='reading' && !profile.levels['unlock_'+kind]) {run.message='Unlock this defender in the tree first.';return;}
  const cost=DEFENDERS[kind].cost;
- if(run.focus<cost) {run.message=`Recruiting costs ${cost} Focus.`;return;}
+ if(!resourceDebug.infinite && run.focus<cost) {run.message=`Recruiting costs ${cost} Focus.`;return;}
  if(run.defenders.length>=ECONOMY.capacity) {run.message='Team full.';return;}
- run.focus-=cost; const index=run.defenders.length;
+ if(!resourceDebug.infinite) run.focus-=cost;
+ const index=run.defenders.length;
  const unit=createUnit(run.nextId++,kind,260+Math.floor(index/4)*42,200+(index%4)*72);
  unit.roleLevel=profile.levels[kind+'_mastery'] ?? 0;
  unit.damage*=1+unit.roleLevel*0.15;unit.maxHp*=1+unit.roleLevel*0.15;unit.hp=unit.maxHp;

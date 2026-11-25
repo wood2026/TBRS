@@ -1,6 +1,7 @@
 import { DEFENDERS, type DefenderKind } from '../combat/defenders.js';
 import type { Unit } from '../combat/units.js';
 import { profile } from '../progression/state.js';
+import { resourceDebug } from '../progression/currency.js';
 import { game } from '../engine.js';
 import { musicButton } from '../music.js';
 import { listen, tapped } from '../input.js';
@@ -94,7 +95,9 @@ export const Play = {
         });
 
         const draw = (dt: number): void => {
-            hud.text = `Brain: ${Math.ceil(run.hp)}/${run.maxHp}   Focus: ${run.focus}   Round ${run.round}  Wave ${run.wave + 1}/4   Insight: +${run.insightEarned}`;
+            const focus = resourceDebug.infinite ? 'Unlimited' : run.focus;
+            const insight = resourceDebug.infinite ? 'Unlimited' : '+' + run.insightEarned;
+            hud.text = `Brain: ${Math.ceil(run.hp)}/${run.maxHp}   Focus: ${focus}   Round ${run.round}  Wave ${run.wave + 1}/4   Insight: ${insight}`;
             notice.text = run.message;
             const selected = run.defenders.find(d => d.id === run.selected);
             stats.text = selected

@@ -2,6 +2,7 @@ import { game } from './engine.js';
 import { UPGRADES } from './progression/upgrades.js';
 import { profile, saveProgress, type Profile } from './progression/state.js';
 import { run } from './battle.js';
+import { resourceDebug } from './progression/currency.js';
 
 /**
  * The game's debug controls: the ways into it that playing would take minutes to reach (docs/make-a-2d-game.md and docs/00-kernel.md, Debug
@@ -18,6 +19,14 @@ import { run } from './battle.js';
 let testBackup:Profile|null=null;
 export function addDebugControls(): void
 {
+    game.cheats.add({
+        name: 'infinite-resources', args: 'on|off', does: 'Toggle infinite Focus and Insight for this session',
+        run: mode => {
+            if (mode && mode !== 'on' && mode !== 'off') return 'Use on or off';
+            resourceDebug.infinite = mode ? mode === 'on' : !resourceDebug.infinite;
+            return `Infinite Focus and Insight: ${resourceDebug.infinite ? 'on' : 'off'}`;
+        },
+    });
     game.cheats.add({name:'test-snapshot',does:'Back up progression before a UI test',run:()=>{testBackup=JSON.parse(JSON.stringify(profile)) as Profile;return 'Progression snapshot stored';}});
     game.cheats.add({name:'test-tree',does:'Preview the expanded tree; restore after testing',run:()=>{
         if(!testBackup)testBackup=JSON.parse(JSON.stringify(profile)) as Profile;
@@ -25,7 +34,7 @@ export function addDebugControls(): void
         profile.insight=500;profile.waves=20;profile.active=false;game.scenes.go('gameover');return 'Expanded tree preview';
     }});
     game.cheats.add({name:'test-restore',does:'Restore the progression snapshot',run:()=>{if(!testBackup)return 'No snapshot';Object.assign(profile,testBackup);saveProgress();testBackup=null;game.scenes.go('title');return 'Progression restored';}});
-    game.inspect.state(() => ({ run, progression: profile, persistent: game.save.persistent }));
+    game.inspect.state(() => ({ run, progression: profile, persistent: game.save.persistent, infiniteResources: resourceDebug.infinite }));
     game.cheats.add({
         name: 'screen',
         does: 'Go straight to a screen: title, play or gameover',

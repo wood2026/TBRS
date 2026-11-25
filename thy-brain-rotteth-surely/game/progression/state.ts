@@ -1,5 +1,6 @@
 import { UPGRADES, upgradeCost, type Upgrade, type UpgradeId } from './upgrades.js';
 import { STORY_IDS, type StoryId } from '../dialogue/rounds.js';
+import { resourceDebug } from './currency.js';
 export type Profile = { version:1; insight:number; levels:Record<UpgradeId,number>; round:number; waves:number; victories:number; attempts:number; storyComplete:boolean; openingComplete:boolean; active:boolean; lastResult:string; storySeen: StoryId[] };
 const blank = ():Profile => ({version:1,insight:0,levels:Object.fromEntries(UPGRADES.map(u=>[u.id,0])),round:1,waves:0,victories:0,attempts:0,storyComplete:false,openingComplete:false,active:false,lastResult:'A new beginning',storySeen:[]});
 export const profile:Profile = blank();
@@ -29,11 +30,16 @@ export function resetProgress():void { Object.assign(profile,blank()); saveProgr
 export function addInsight(amount:number):void { profile.insight+=amount; saveProgress(); }
 export function visible(u:Upgrade):boolean { return !u.parent || profile.levels[u.parent]>0; }
 export function unlocked(u:Upgrade):boolean { return (!u.parent || profile.levels[u.parent]>=u.required) && profile.waves>=u.waves; }
+export function canPurchaseUpgrade(u: Upgrade): boolean {
+ const rank = profile.levels[u.id];
+ return !profile.active && visible(u) && unlocked(u) && rank < (u.max ?? Infinity)
+  && (resourceDebug.infinite || profile.insight >= upgradeCost(u, rank));
+}
 export function purchaseUpgrade(id:UpgradeId):boolean {
- const u=UPGRADES.find(u=>u.id===id)!;
- if(!u || profile.active || !visible(u) || !unlocked(u) || profile.levels[id]>=(u.max ?? Infinity)) return false;
- const cost=upgradeCost(u,profile.levels[id]); if(profile.insight<cost) return false;
- profile.insight-=cost; profile.levels[id]++; saveProgress(); return true;
+ const u=UPGRADES.find(u=>u.id===id);
+ if (!u || !canPurchaseUpgrade(u)) return false;
+ if (!resourceDebug.infinite) profile.insight-=upgradeCost(u,profile.levels[id]);
+ profile.levels[id]++; saveProgress(); return true;
 }
 export function beginAttempt():void { profile.active=true; profile.attempts++; saveProgress(); }
 export function finishAttempt(won:boolean, earned:number):void {

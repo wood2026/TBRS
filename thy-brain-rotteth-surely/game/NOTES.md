@@ -7,8 +7,10 @@
 - B also recruits Reading. Click a defender to inspect; P/Escape pauses.
 - Music on/off is at the upper right. The preference persists and playback starts after the first interaction.
 - Upgrades use Insight only on the tree screen; repeat levels cost more. Unit unlocks are one-time.
-- Tree: wheel, Up/Down or drag scrolls. Click a node, then Purchase selected.
-- Node colors: gray locked, neutral available, green affordable, blue purchased/unlocked. Levels remain visible.
+- Tree: wheel, Up/Down or drag scrolls. Click a node, then Purchase upgrade when offered.
+- Silver outlines mark owned upgrades, gold marks max rank, and cyan brackets mark selection.
+- Green icon glow marks affordable upgrades. Locks and dashed links mark unmet requirements.
+- A rank of 0/∞ indicates an uncapped repeatable upgrade. Its bar displays ten ranks at a time.
 - Only the root is visible initially; purchases reveal connected branches.
 - Reset save requires two clicks and affects progression only. Older saves receive zero levels for new nodes.
 
@@ -68,5 +70,7 @@
 - Browser: real defeat -> Insight -> root purchase -> branch reveal; tree keyboard/drag scroll;
   selected mastery purchase; unlocked-role buttons and combat rendering.
 - Preview tests snapshot and restore progression; user progression is not left with test grants.
-- Debug: test-snapshot, test-tree, test-restore (restore before reloading); screen; inspect.
+- Debug: infinite-resources on/off grants free recruitment and purchases during this session.
+  Purchases and battle progression still save. Use test-snapshot and test-restore to roll back testing.
+- Debug: test-tree (expanded tree preview), screen and inspect.
 - npm run -s smoke -- --seconds 30 checks browser runtime; npm run -s serve opens localhost:4173.

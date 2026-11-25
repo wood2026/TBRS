@@ -7,6 +7,7 @@ import { AI, BEHAVIORS } from '../game/combat/config.ts';
 import { wavesForRound } from '../game/combat/waves.ts';
 import { profile,resetProgress,loadProgress,purchaseUpgrade,visible,unlocked,saveProgress } from '../game/progression/state.ts';
 import { UPGRADES,upgradeCost } from '../game/progression/upgrades.ts';
+import { resourceDebug } from '../game/progression/currency.ts';
 function fight(recruit=true):void {
  for(let frame=0;frame<240*60&&run.phase==='combat';frame++) {if(recruit&&frame%30===0&&run.focus>=40)buyDefender();stepBattle(1/60);}
  assert.notEqual(run.phase,'combat','attempt must terminate');
@@ -17,6 +18,32 @@ test('first upgrade alone; branches, repeat costs, prerequisites and milestone l
  assert.equal(UPGRADES.filter(visible).length,4);const first=upgradeCost(UPGRADES[0],1);purchaseUpgrade('damage');assert.ok(upgradeCost(UPGRADES[0],2)>first);
  purchaseUpgrade('brain');const recovery=UPGRADES.find(u=>u.id==='recovery')!;assert.ok(visible(recovery));assert.equal(unlocked(recovery),false);
  profile.waves=2;assert.equal(purchaseUpgrade('recovery'),true);
+});
+test('infinite resources bypass costs and preserve prerequisites, rank limits and real balances', () => {
+ resetProgress();
+ resourceDebug.infinite = true;
+ try {
+  assert.equal(purchaseUpgrade('unlock_exercise'), false);
+  assert.equal(purchaseUpgrade('damage'), true);
+  assert.equal(purchaseUpgrade('movement'), true);
+  assert.equal(purchaseUpgrade('unlock_exercise'), true);
+  assert.equal(purchaseUpgrade('unlock_exercise'), false);
+  assert.equal(profile.insight, 0);
+  resetRun();
+  run.focus = 0;
+  buyDefender('exercise');
+  buyDefender('sleep');
+  assert.equal(run.defenders.length, 1);
+  assert.equal(run.focus, 0);
+  resourceDebug.infinite = false;
+  buyDefender();
+  assert.equal(run.defenders.length, 1);
+  endAttempt(false);
+  assert.equal(purchaseUpgrade('attack'), false);
+ } finally {
+  resourceDebug.infinite = false;
+  resetProgress();
+ }
 });
 test('defeat retains round, awards Insight without kills, resets Focus and units on retry',()=>{
  resetProgress();resetRun();fight(false);assert.equal(run.phase,'defeat');assert.ok(profile.insight>0);assert.equal(run.kills,0);assert.equal(profile.round,1);

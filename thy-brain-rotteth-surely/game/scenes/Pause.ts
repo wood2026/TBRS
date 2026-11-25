@@ -21,7 +21,7 @@ export const Pause = {
         game.ui.panel({ anchor: 'center', w: W, h: H, safeArea: false, style: { fill: '#000000a0', radius: 0, border: 0, bevel: 0, gloss: 0, shadow: 0 } });
         const menu = game.ui.window({ anchor: 'center', w: Math.min(W - 96, 460), h: 'auto', title: 'Paused', titleHeight: 56, layout: { padding: 24, gap: 14, align: 'stretch' } });
         game.ui.button({ parent: menu, h: 80, text: 'Resume', style: 'good', icon: 'play', onClick: () => game.scenes.pop() });
-        game.ui.button({ parent: menu, h: 72, text: 'End attempt', icon: 'restart', onClick: () => { endAttempt(false); game.scenes.go('gameover'); } });
+        game.ui.button({ parent: menu, h: 72, text: 'End attempt', style: 'bad', icon: 'restart', onClick: () => { endAttempt(false); game.scenes.go('gameover'); } });
         game.ui.button({ parent: menu, h: 72, text: 'Title', icon: 'home', onClick: () => { endAttempt(false); game.scenes.go('gameover'); } });
         musicButton();
         menu.ui.y = -H;

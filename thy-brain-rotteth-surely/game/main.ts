@@ -8,6 +8,7 @@ import { loadMusic, setupMusic } from './music.js';
 import assets from './assets.json';
 import prototypeArt from './prototype-assets.json';
 import { paintArt } from './art.js';
+import { installUiTheme } from './ui-theme.js';
 import { addDebugControls } from './debug.js';
 import { Title } from './scenes/Title.js';
 import { Play } from './scenes/Play.js';
@@ -16,8 +17,7 @@ import { Pause } from './scenes/Pause.js';
 
 loadProgress(game.save.read('progression-v1', null), value => game.save.write('progression-v1', value));
 paintArt();
-// The menus wear the candy skin (ui-skin-candy in the manifest), chosen now so its font loads under the loading screen.
-game.ui.theme = 'candy';
+installUiTheme();
 await Promise.all([game.assets.load(assets, { pack: 'title' }), game.assets.load(prototypeArt), loadMusic()]);
 
 game.scenes.register(Title);
