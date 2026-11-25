@@ -7,20 +7,20 @@ export const STORY = {
     opening: {
         title: 'A convenient suspect',
         lines: [
-            { speaker: 'Inner Voice', text: 'Ideas used to come easily. Then came the endless scroll. J’accuse!' },
-            { speaker: 'Brain', text: 'You’ve named a suspect. Can we see the evidence?' },
+            { speaker: 'Inner Voice', text: "Thinking is too hard! What are you doing up there?!" },
+            { speaker: 'Brain', text: "You're blaming me? I'll show you what's really to blame!" },
         ],
     },
     distraction: {
         title: 'First distraction',
         lines: [
-            { speaker: 'Inner Voice', text: 'A clip that asks nothing of me. How considerate.', sources: ['yousef'] },
+            { speaker: 'Inner Voice', text: "Oh, hey, it's a YouTube short! What were we talking about?", sources: ['yousef'] },
         ],
     },
     reading: {
         title: 'Recruiting Reading',
         lines: [
-            { speaker: 'Brain', text: 'Reading’s here. Now you have to decide what to do with your Focus.' },
+            { speaker: 'Brain', text: "Of course you can't think if that's all you feed me! Try reading! Spend your focus wisely!" },
         ],
     },
     wave: {
