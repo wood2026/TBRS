@@ -15,6 +15,13 @@ const ROLE_EFFECTS: Partial<Record<string, string>> = { exercise: 'sprint', slee
 const BATTLEFIELDS = [
     'battlefield-forest', 'battlefield-crossroads', 'battlefield-archive', 'battlefield-cloister', 'battlefield-sanctuary',
 ];
+const VICTORY_STORY: Partial<Record<number, StoryId>> = {
+    1: 'roundOneFinished',
+    2: 'roundTwoFinished',
+    3: 'roundThreeFinished',
+    4: 'roundFourFinished',
+    5: 'ending',
+};
 
 const DISTRACTION_LABELS: [Behavior, string][] = [
     ['aggressive', 'Pop-up Ads'],
@@ -184,10 +191,8 @@ export const Play = {
             stepBattle(dt);
             draw(dt);
             if (run.phase !== 'combat') {
-                const aftermath: StoryId[] = [];
-                if (run.round === 1 && run.wave > 0) aftermath.push('wave');
-                if (run.phase === 'defeat') aftermath.push('firstFailure');
-                playStory(aftermath, () => game.scenes.go('gameover'));
+                const story = run.phase === 'defeat' ? 'firstFailure' : VICTORY_STORY[run.round];
+                playStory(story ? [story] : [], () => game.scenes.go('gameover'));
             }
         });
     },

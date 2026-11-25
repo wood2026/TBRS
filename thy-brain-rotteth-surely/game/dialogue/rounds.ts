@@ -28,19 +28,50 @@ export const STORY = {
         lines: [
             { speaker: 'Inner Voice', text: "Task failed successfully!" },
             { speaker: 'Brain', text: "Ugh, let's try that again! Prepare better this time!" },
-        ],
-    },
-    wave: {
-        title: 'First wave cleared',
-        lines: [
             { speaker: 'Brain', text: 'Remember the plan. Decide when to spend. That’s executive function at work.', sources: ['dictionary'] },
         ],
     },
-    scores: {
-        title: 'What did the tests measure?',
+    roundOneFinished: {
+        title: 'We won?',
         lines: [
-            { speaker: 'Inner Voice', text: 'Some school scores fell. Have I found my proof?', sources: ['neves'] },
-            { speaker: 'Brain', text: 'You found a change in school scores. The older Danish tests showed modest gains.', sources: ['teasdale'] },
+            { speaker: 'Inner Voice', text: "Am I cured?" },
+            { speaker: 'Brain', text: "It's not that simple. Real progress takes time." },
+            { speaker: 'Inner Voice', text: "It can't just be me." },
+            { speaker: 'Inner Voice', text: "Studies show cognitive tests declining across the board.", sources: ['neves'] },
+            { speaker: 'Brain', text: "You found a change in school scores. The older Danish tests showed modest gains.", sources: ['teasdale'] },
+            { speaker: 'Inner Voice', text: "Ugh, whatever... Let's go again!" },
+        ],
+    },
+    roundTwoFinished: {
+        title: 'Lookie there! We won again!',
+        lines: [
+            { speaker: 'Inner Voice', text: "So maybe everyone including me isn't completely stupid." },
+            { speaker: 'Brain', text: "..." },
+            { speaker: 'Inner Voice', text: "Which one are you not responding to?" },
+            { speaker: 'Brain', text: "Moving right along, it's great to be making progress, but repetition is key.", sources: ['diamond'] },
+            { speaker: 'Inner Voice', text: "Then let's repeat!" },
+        ],
+    },
+    roundThreeFinished: {
+        title: 'What is this feeling?',
+        lines: [
+            { speaker: 'Inner Voice', text: "Is this... clarity?" },
+            { speaker: 'Brain', text: "Not quite! Patience, my young padawan." },
+            { speaker: 'Inner Voice', text: "Lord, that's a dated reference..." },
+            { speaker: 'Brain', text: "I'm *your* brain, you know..."},
+            { speaker: 'Inner Voice', text: "Oh, isn't there supposed to be a lesson here?" },
+            { speaker: 'Brain', text: "That's right! Notice how each round is more difficult? That's called progressive difficulty!", sources: ['diamond'] },
+            { speaker: 'Inner Voice', text: "I see. So the more I learn, the more I can handle? Well then, bring it!" },
+        ],
+    },
+    roundFourFinished: {
+        title: 'Is that all you got?',
+        lines: [
+            { speaker: 'Inner Voice', text: "Let's go again! I can handle more than this!" },
+            { speaker: 'Brain', text: "That's great, but you should know: \"people improve on what they practice, but only on what they practice.\"", sources: ['diamond2'] },
+            { speaker: 'Inner Voice', text: "So what's the point of this?" },
+            { speaker: 'Brain', text: "Exactly! The beatings will continue until morale improves." },
+            { speaker: 'Inner Voice', text: "..." },
         ],
     },
     exercise: {
@@ -71,11 +102,12 @@ export const STORY = {
         ],
     },
     ending: {
-        title: 'Who rotteth the brain?',
+        title: 'Thy Brain Rotteth Not!',
         lines: [
-            { speaker: 'Inner Voice', text: 'Who rotteth the brain, then? Was it the feed?' },
-            { speaker: 'Brain', text: 'Perhaps. Sleep, fitness, stress and company all deserve a look.', sources: ['diamond'] },
-            { speaker: 'Inner Voice', text: 'I came for a culprit. I leave with a bedtime and a walking companion.' },
+            { speaker: 'Inner Voice', text: "It is finished. My executive functions." },
+            { speaker: 'Brain', text: "I thrive, but you must know, \"Once practice ends, benefits diminish.\"", sources: ['diamond2'] },
+            { speaker: 'Inner Voice', text: "Then, in order to have a rotless brain, you must transcend?" },
+            { speaker: 'Brain', text: "Just change your habits. You are what you do." },
         ],
     },
 } satisfies Record<string, Exchange>;

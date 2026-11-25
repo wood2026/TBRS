@@ -20,14 +20,14 @@
 
 ## Story and sources
 - A convenient suspect, First distraction and Recruiting Reading play together before the first battle.
-  Existing saves see the complete opening once. First wave cleared plays after the round 1 battle and before
-  First defeat if both are due. The first defeat plays once per save before the upgrade screen.
+  Existing saves see the complete opening once. The first defeat plays once per save before the upgrade screen.
 - The visual novel dialogue box shows one line and the active speaker's large portrait. Click Next or Continue,
   or press Enter when the button has focus.
-- The results screen carries the round 1 evidence check, first movement/sleep purchases, Social Connection
-  and Mindfulness unlocks, and the round 5 ending. First-time dialogue is tracked in progression-v1.
+- Each campaign victory plays its exchange before the results screen. Round 5 plays the ending with the zen portraits.
+- The upgrade screen carries the first movement/sleep purchases and Social Connection and Mindfulness unlocks.
+  First-time dialogue is tracked in progression-v1.
 - Tab to a Source button and press Enter, or click/tap it. A source opened in play holds combat until closed.
-- Title > References & Credits includes ten full citations, the complete dialogue and the CC0 music credit.
+- Title > References & Credits includes eleven full citations, the complete dialogue and the CC0 music credit.
 - dialogue/rounds.ts holds the exchanges, sources.ts holds citation records, panel.ts sequences unseen exchanges,
   and references.ts renders dialogue, source notes and the bibliography.
 

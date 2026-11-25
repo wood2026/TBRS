@@ -7,6 +7,7 @@ type Panel = ReturnType<typeof game.ui.panel>;
 const rowStyle = { fill: '#00000000', border: 0, bevel: 0, depth: 0, gloss: 0, shine: 0, shadow: 0 };
 const readingStyle = { font: '18px sans-serif', textCase: 'none', textOutline: 0, textDepth: 0, textShadowY: 0 } as const;
 const speakerPortrait = { Brain: 'large-brain', 'Inner Voice': 'large-inner-voice' } as const;
+const endingPortrait = { Brain: 'zen-brain', 'Inner Voice': 'zen-inner-voice' } as const;
 
 function openModal(title: string, height: number) {
     const panel = game.ui.window({
@@ -55,6 +56,7 @@ function showSource(id: SourceId) {
 
 export function showExchange(id: StoryId, onComplete?: () => void): void {
     const { title, lines } = exchange(id);
+    const portraits = id === 'ending' ? endingPortrait : speakerPortrait;
     const showLine = (index: number): void => {
         const line = lines[index];
         const last = index === lines.length - 1;
@@ -66,7 +68,7 @@ export function showExchange(id: StoryId, onComplete?: () => void): void {
         });
         game.ui.label({
             parent: stage, id: 'story-portrait', h: 494,
-            icon: speakerPortrait[line.speaker], iconSize: 480, accessibleLabel: line.speaker,
+            icon: portraits[line.speaker], iconSize: 480, accessibleLabel: line.speaker,
         });
         const box = game.ui.panel({
             parent: stage, id: 'story-dialogue', h: 178,
@@ -104,10 +106,10 @@ export function showExchange(id: StoryId, onComplete?: () => void): void {
 }
 
 export function showReferences(): void {
-    const { panel, close } = openModal('References & Credits', 662);
+    const { panel, close } = openModal('References & Credits', 692);
     game.ui.label({ parent: panel, h: 36, text: 'Adapted from Thy Brain Rotteth Surely, an inquiry essay by Josh Wood.' });
     const columns = game.ui.panel({
-        parent: panel, h: 440, style: rowStyle, layout: { direction: 'row', padding: 0, gap: 20, align: 'stretch' },
+        parent: panel, h: 470, style: rowStyle, layout: { direction: 'row', padding: 0, gap: 20, align: 'stretch' },
     });
     const bibliography = game.ui.panel({ parent: columns, w: 503, layout: { padding: 10, gap: 4, align: 'stretch' } });
     game.ui.label({ parent: bibliography, text: 'Works Cited', h: 32 });
@@ -118,10 +120,10 @@ export function showReferences(): void {
             onClick: trigger => { trigger.ui.focused = true; showSource(id); },
         });
     }
-    const dialogue = game.ui.panel({ parent: columns, w: 503, layout: { padding: 10, gap: 4, align: 'stretch' } });
+    const dialogue = game.ui.panel({ parent: columns, w: 503, layout: { padding: 10, gap: 3, align: 'stretch' } });
     game.ui.label({ parent: dialogue, text: 'Reread the dialogue · contains story spoilers', h: 32 });
     for (const id of STORY_IDS) {
-        game.ui.button({ parent: dialogue, h: 32, text: exchange(id).title, onClick: trigger => { trigger.ui.focused = true; showExchange(id); } });
+        game.ui.button({ parent: dialogue, h: 29, text: exchange(id).title, onClick: trigger => { trigger.ui.focused = true; showExchange(id); } });
     }
     game.ui.button({
         parent: panel, h: 42, text: 'Background music (CC0 1.0)', icon: 'cc0-badge', iconSize: 88,

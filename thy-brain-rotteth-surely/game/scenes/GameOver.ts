@@ -86,10 +86,6 @@ export const GameOver={name:'gameover',enter():void {
  game.text('Gray locked | Blue purchased | Green affordable',460,610,{size:16,color:'#b3c7d9'});
  if(!game.save.persistent)game.text('Storage unavailable: session progress only',640,698,{size:15,color:'#ffb36b'});
  refresh();
- const resultStory: StoryId[] = [];
- if (profile.lastResult.startsWith('Victory in round 1.')) resultStory.push('scores');
- if (profile.storyComplete) resultStory.push('ending');
- playStory(resultStory);
  game.step('tree',dt=>{
   if (game.ui.modalTop) return;
   const p=game.input.pointer;

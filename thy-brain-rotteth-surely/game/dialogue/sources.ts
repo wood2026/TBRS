@@ -18,6 +18,12 @@
         url: 'https://doi.org/10.1146/annurev-psych-113011-143750',
         note: 'On p. 153, this review describes how executive functions can suffer with stress, sadness, loneliness, sleep deprivation, and poor physical fitness. In-game abilities and their numerical effects are fictional.',
     },
+    diamond2: {
+    name: 'Diamond and Ling',
+    citation: 'Diamond, Adele, and Daphne S. Ling. “Conclusions about Interventions, Programs, and Approaches for Improving Executive Functions That Appear Justified and Those That, Despite Much Hype, Do Not.” Developmental Cognitive Neuroscience, vol. 18, 2016, pp. 34–48.',
+    url: 'https://doi.org/10.1016/j.dcn.2015.11.005',
+    note: 'This review discusses the limited transfer of executive function training to unpracticed skills and tasks. Improvement in one activity does not necessarily translate into broader cognitive improvement.',
+    },
     ford: {
         name: 'Ford et al.',
         citation: 'Ford, Earl S., Timothy J. Cunningham, and Janet B. Croft. “Trends in Self-Reported Sleep Duration among US Adults from 1985 to 2012.” Sleep, vol. 38, no. 5, 2015, pp. 829–832.',
