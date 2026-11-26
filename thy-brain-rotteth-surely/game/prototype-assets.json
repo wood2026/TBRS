@@ -71,9 +71,9 @@
       {
         "kind": "image",
         "key": "upgrade-background",
-        "url": "prototype-art/upgrade-background.webp",
-        "w": 1280,
-        "h": 720,
+        "url": "prototype-art/upgrade-bg.png",
+        "w": 1672,
+        "h": 941,
         "atlas": false
       },
       {
