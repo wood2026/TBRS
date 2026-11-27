@@ -77,14 +77,14 @@ export const STORY = {
     exercise: {
         title: 'Making room for movement',
         lines: [
-            { speaker: 'Brain', text: 'Fewer young teens met the fitness benchmark in one U.S. survey.', sources: ['gahche'], context: ['fryar'] },
-            { speaker: 'Inner Voice', text: 'Fitness matters, then. Send in the runner.', sources: ['diamond'] },
+            { speaker: 'Brain', text: 'We need to get moving. Fewer young teens met the fitness benchmark in one U.S. survey.', sources: ['gahche'], context: ['fryar'] },
+            { speaker: 'Inner Voice', text: 'Ah, and physical fitness will help protect my brain. Send in the runner.', sources: ['diamond'] },
         ],
     },
     sleep: {
-        title: 'One more clip',
+        title: 'One more round',
         lines: [
-            { speaker: 'Inner Voice', text: 'One more clip?' },
+            { speaker: 'Inner Voice', text: 'One more round?' },
             { speaker: 'Brain', text: 'Short on sleep? Good luck keeping that plan straight.', sources: ['diamond'], context: ['ford', 'cdc'] },
         ],
     },
@@ -98,7 +98,7 @@ export const STORY = {
         title: 'Mindfulness',
         lines: [
             { speaker: 'Brain', text: 'Stress and low mood can make it harder to think clearly.', sources: ['diamond'] },
-            { speaker: 'Inner Voice', text: 'One thing at a time, dear Brain. A pulse should buy us a moment.' },
+            { speaker: 'Inner Voice', text: 'One thing at a time, dear Brain...' },
         ],
     },
     ending: {
