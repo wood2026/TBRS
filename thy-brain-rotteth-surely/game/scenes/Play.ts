@@ -25,10 +25,10 @@ const VICTORY_STORY: Partial<Record<number, StoryId>> = {
 };
 
 const DISTRACTION_LABELS: [Behavior, string][] = [
-    ['aggressive', 'Pop-up Ads'],
+    ['aggressive', 'Clickbait'],
     ['opportunistic', 'Phone Notifications'],
-    ['evasive', 'Tab Hopping'],
-    ['relentless', 'Autoplay Feeds'],
+    ['evasive', 'Context Switchers'],
+    ['relentless', 'Infinite Scroll'],
 ];
 
 const screenX = (x: number) => 300 + (x - 190) * 0.88;
